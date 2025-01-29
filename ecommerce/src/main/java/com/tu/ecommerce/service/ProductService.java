@@ -4,9 +4,9 @@ import com.tu.ecommerce.dao.ProductRepository;
 import com.tu.ecommerce.entity.Product;
 import com.tu.ecommerce.model.viewModel.ProductView;
 import com.tu.ecommerce.util.ModelMapperUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ProductService {
@@ -22,8 +22,8 @@ public class ProductService {
         this.modelMapperUtil = modelMapperUtil;
     }
 
-    public List<ProductView> getAllProducts() {
-        List<Product> products = productRepository.findAll();
-        return this.modelMapperUtil.convertAll(products, ProductView.class);
+    public Page<ProductView> getAllProducts(Pageable pageable) {
+        Page<Product> products = productRepository.findAll(pageable);
+        return this.modelMapperUtil.convertToPage(pageable, products, ProductView.class);
     }
 }
