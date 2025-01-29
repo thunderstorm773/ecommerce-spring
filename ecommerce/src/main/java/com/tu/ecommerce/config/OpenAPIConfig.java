@@ -22,7 +22,6 @@ public class OpenAPIConfig {
     public GroupedOpenApi apiControllers() {
         return GroupedOpenApi.builder()
                 .group("controllers")
-                .packagesToScan("com.tu.ecommerce.controller")
                 .pathsToMatch("/api/**")
                 .build();
     }
