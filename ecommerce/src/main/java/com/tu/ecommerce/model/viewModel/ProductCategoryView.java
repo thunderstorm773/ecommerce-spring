@@ -1,10 +1,11 @@
 package com.tu.ecommerce.model.viewModel;
 
-import com.tu.ecommerce.entity.ProductCategory;
-import org.springframework.data.rest.core.config.Projection;
+import lombok.Data;
 
-@Projection(name = "productCategoryView", types = {ProductCategory.class})
-public interface ProductCategoryView {
+@Data
+public class ProductCategoryView {
 
-    String getCategoryName();
+    private Long id;
+
+    private String categoryName;
 }

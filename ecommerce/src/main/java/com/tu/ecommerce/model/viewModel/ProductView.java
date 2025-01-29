@@ -1,31 +1,30 @@
 package com.tu.ecommerce.model.viewModel;
 
-import com.tu.ecommerce.entity.Product;
-import org.springframework.data.rest.core.config.Projection;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Projection(name = "productView", types = {Product.class})
-public interface ProductView {
+@Data
+public class ProductView {
 
-    Long getId();
+    private Long id;
 
-    String getSku();
+    private String sku;
 
-    String getName();
+    private String name;
 
-    String getDescription();
+    private String description;
 
-    BigDecimal getUnitPrice();
+    private BigDecimal unitPrice;
 
-    String getImageUrl();
+    private String imageUrl;
 
-    Boolean getIsActive();
+    private Boolean isActive;
 
-    Integer getUnitsInStock();
+    private Integer unitsInStock;
 
-    Date getDateCreated();
+    private Date dateCreated;
 
-    Date getLastUpdated();
+    private Date lastUpdated;
 }
