@@ -26,4 +26,9 @@ public class ProductService {
         Page<Product> products = productRepository.findAll(pageable);
         return this.modelMapperUtil.convertToPage(pageable, products, ProductView.class);
     }
+
+    public Page<ProductView> getProductsByCategoryId(Long categoryId, Pageable pageable) {
+        Page<Product> products = productRepository.findProductsByCategoryId(categoryId, pageable);
+        return this.modelMapperUtil.convertToPage(pageable, products, ProductView.class);
+    }
 }
