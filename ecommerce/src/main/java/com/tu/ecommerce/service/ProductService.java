@@ -7,6 +7,7 @@ import com.tu.ecommerce.util.ModelMapperUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class ProductService {
@@ -22,13 +23,20 @@ public class ProductService {
         this.modelMapperUtil = modelMapperUtil;
     }
 
-    public Page<ProductView> getAllProducts(Pageable pageable) {
-        Page<Product> products = productRepository.findAll(pageable);
+    public Page<ProductView> getAllProducts(String name, Pageable pageable) {
+        Page<Product> products;
+
+        if (StringUtils.hasText(name)) {
+            products = this.productRepository.findProductByNameContaining(name, pageable);
+        } else {
+            products = this.productRepository.findAll(pageable);
+        }
+
         return this.modelMapperUtil.convertToPage(pageable, products, ProductView.class);
     }
 
     public Page<ProductView> getProductsByCategoryId(Long categoryId, Pageable pageable) {
-        Page<Product> products = productRepository.findProductsByCategoryId(categoryId, pageable);
+        Page<Product> products = this.productRepository.findProductsByCategoryId(categoryId, pageable);
         return this.modelMapperUtil.convertToPage(pageable, products, ProductView.class);
     }
 }

@@ -17,12 +17,13 @@ public class ProductController {
     }
 
     @GetMapping("")
-    public Page<ProductView> getAllProducts(Pageable pageable) {
-        return productService.getAllProducts(pageable);
+    public Page<ProductView> getAllProducts(@RequestParam(value = "name", required = false) String name,
+                                            Pageable pageable) {
+        return this.productService.getAllProducts(name, pageable);
     }
 
     @GetMapping("category/{id}")
     public Page<ProductView> getProductsByCategoryId(@PathVariable("id") Long id, Pageable pageable) {
-        return productService.getProductsByCategoryId(id, pageable);
+        return this.productService.getProductsByCategoryId(id, pageable);
     }
 }
