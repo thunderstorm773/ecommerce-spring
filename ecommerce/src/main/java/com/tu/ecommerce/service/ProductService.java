@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Optional;
+
 @Service
 public class ProductService {
 
@@ -38,5 +40,11 @@ public class ProductService {
     public Page<ProductView> getProductsByCategoryId(Long categoryId, Pageable pageable) {
         Page<Product> products = this.productRepository.findProductsByCategoryId(categoryId, pageable);
         return this.modelMapperUtil.convertToPage(pageable, products, ProductView.class);
+    }
+
+    public ProductView getProduct(Long id) {
+        Optional<Product> product = this.productRepository.findById(id);
+        return product.map(value -> this.modelMapperUtil.getModelMapper().map(value, ProductView.class))
+                .orElse(null);
     }
 }

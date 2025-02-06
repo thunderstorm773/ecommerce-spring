@@ -26,4 +26,9 @@ public class ProductController {
     public Page<ProductView> getProductsByCategoryId(@PathVariable("id") Long id, Pageable pageable) {
         return this.productService.getProductsByCategoryId(id, pageable);
     }
+
+    @GetMapping("{id}")
+    public ProductView getProduct(@PathVariable("id") Long id) {
+        return this.productService.getProduct(id);
+    }
 }
