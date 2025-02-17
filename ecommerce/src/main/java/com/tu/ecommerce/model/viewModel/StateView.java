@@ -8,6 +8,4 @@ public class StateView {
     private Integer id;
 
     private String name;
-
-    private CountryView country;
 }
