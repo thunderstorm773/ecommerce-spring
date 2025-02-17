@@ -23,7 +23,7 @@ public class ProductCategoryService {
     }
 
     public Page<ProductCategoryView> getAllProductCategories(Pageable pageable) {
-        Page<ProductCategory> productCategories = productCategoryRepository.findAll(pageable);
+        Page<ProductCategory> productCategories = this.productCategoryRepository.findAll(pageable);
         return this.modelMapperUtil.convertToPage(pageable, productCategories, ProductCategoryView.class);
     }
 }
