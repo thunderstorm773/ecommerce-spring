@@ -1,10 +1,8 @@
 package com.tu.ecommerce.service;
 
 import com.tu.ecommerce.dao.CustomerRepository;
-import com.tu.ecommerce.entity.Address;
-import com.tu.ecommerce.entity.Customer;
-import com.tu.ecommerce.entity.Order;
-import com.tu.ecommerce.entity.OrderItem;
+import com.tu.ecommerce.dao.ProductRepository;
+import com.tu.ecommerce.entity.*;
 import com.tu.ecommerce.model.bindingModel.CreateOrderItem;
 import com.tu.ecommerce.model.bindingModel.CreatePurchase;
 import com.tu.ecommerce.model.bindingModel.CreatePurchaseResponse;
@@ -22,12 +20,16 @@ public class CheckoutService {
 
     private final CustomerRepository customerRepository;
 
+    private final ProductRepository productRepository;
+
     private final ModelMapperUtil modelMapperUtil;
 
     public CheckoutService(CustomerRepository customerRepository,
+                           ProductRepository productRepository,
                            ModelMapperUtil modelMapperUtil) {
 
         this.customerRepository = customerRepository;
+        this.productRepository = productRepository;
         this.modelMapperUtil = modelMapperUtil;
     }
 
@@ -41,7 +43,12 @@ public class CheckoutService {
         List<CreateOrderItem> createOrderItems = purchase.getOrderItems().stream().toList();
         List<OrderItem> mappedOrderItems = this.modelMapperUtil.convertAll(createOrderItems, OrderItem.class);
         Set<OrderItem> orderItems = new HashSet<>(mappedOrderItems);
-        orderItems.forEach(item -> order.addOrderItem(item));
+
+        for (OrderItem orderItem : orderItems) {
+            Product product = this.productRepository.findById(orderItem.getProduct().getId()).orElse(null);
+            orderItem.setProduct(product);
+            order.addOrderItem(orderItem);
+        }
 
         Address shippingAddress = this.modelMapperUtil.getModelMapper().map(purchase.getShippingAddress(), Address.class);
         order.setShippingAddress(shippingAddress);

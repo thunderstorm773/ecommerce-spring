@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 @Data
 public class CreateOrderItem {
 
+    private Long id;
+
     private String imageURL;
 
     private BigDecimal unitPrice;
