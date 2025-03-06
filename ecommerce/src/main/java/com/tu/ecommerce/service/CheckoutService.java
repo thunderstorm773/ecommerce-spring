@@ -56,7 +56,12 @@ public class CheckoutService {
         Address billingAddress = this.modelMapperUtil.getModelMapper().map(purchase.getBillingAddress(), Address.class);
         order.setBillingAddress(billingAddress);
 
-        Customer customer = this.modelMapperUtil.getModelMapper().map(purchase.getCustomer(), Customer.class);
+        // check for existing user
+        Customer customer = this.customerRepository.findByEmail(purchase.getCustomer().getEmail());
+        if(customer == null) {
+            customer = this.modelMapperUtil.getModelMapper().map(purchase.getCustomer(), Customer.class);
+        }
+
         customer.addOrder(order);
 
         this.customerRepository.save(customer);
