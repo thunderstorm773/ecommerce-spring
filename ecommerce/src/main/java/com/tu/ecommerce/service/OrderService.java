@@ -23,7 +23,7 @@ public class OrderService {
     }
 
     public Page<OrderView> getAllOrdersByCustomerEmail(String customerEmail, Pageable pageable) {
-        Page<Order> orders = this.orderRepository.findAllByCustomer_Email(customerEmail, pageable);
+        Page<Order> orders = this.orderRepository.findAllByCustomer_EmailOrderByDateCreatedDesc(customerEmail, pageable);
         return this.modelMapperUtil.convertToPage(pageable, orders, OrderView.class);
     }
 }
