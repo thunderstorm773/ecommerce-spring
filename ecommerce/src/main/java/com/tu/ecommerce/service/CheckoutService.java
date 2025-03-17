@@ -1,19 +1,21 @@
 package com.tu.ecommerce.service;
 
+import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 import com.tu.ecommerce.dao.CustomerRepository;
 import com.tu.ecommerce.dao.ProductRepository;
 import com.tu.ecommerce.entity.*;
 import com.tu.ecommerce.model.bindingModel.CreateOrderItem;
 import com.tu.ecommerce.model.bindingModel.CreatePurchase;
 import com.tu.ecommerce.model.bindingModel.CreatePurchaseResponse;
+import com.tu.ecommerce.model.bindingModel.PaymentInfo;
 import com.tu.ecommerce.util.ModelMapperUtil;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class CheckoutService {
@@ -26,11 +28,14 @@ public class CheckoutService {
 
     public CheckoutService(CustomerRepository customerRepository,
                            ProductRepository productRepository,
-                           ModelMapperUtil modelMapperUtil) {
+                           ModelMapperUtil modelMapperUtil,
+                           @Value("${stripe.key.secret}") String stripeSecretKey) {
 
         this.customerRepository = customerRepository;
         this.productRepository = productRepository;
         this.modelMapperUtil = modelMapperUtil;
+
+        Stripe.apiKey = stripeSecretKey;
     }
 
     @Transactional
@@ -67,6 +72,18 @@ public class CheckoutService {
         this.customerRepository.save(customer);
 
         return new CreatePurchaseResponse(orderTrackingNumber);
+    }
+
+    public PaymentIntent createPaymentIntent(PaymentInfo paymentInfo) throws StripeException {
+        List<String> paymentMethodTypes = new ArrayList<>();
+        paymentMethodTypes.add("card");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("amount", paymentInfo.getAmount());
+        params.put("currency", paymentInfo.getCurrency());
+        params.put("payment_method_types", paymentMethodTypes);
+
+        return PaymentIntent.create(params);
     }
 
     private String generateOrderTrackingNumber() {
