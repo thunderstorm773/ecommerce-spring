@@ -83,6 +83,7 @@ public class CheckoutService {
         params.put("currency", paymentInfo.getCurrency());
         params.put("payment_method_types", paymentMethodTypes);
         params.put("description", "ECommerce");
+        params.put("receipt_email", paymentInfo.getReceiptEmail());
 
         return PaymentIntent.create(params);
     }
