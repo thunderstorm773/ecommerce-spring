@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.accept.ContentNegotiationStrategy;
 import org.springframework.web.accept.HeaderContentNegotiationStrategy;
@@ -20,7 +21,9 @@ public class SecurityConfig {
                 requests.requestMatchers("/api/orders/**")
                         .authenticated()
                         .anyRequest().permitAll())
-                .oauth2ResourceServer(resourceServer -> resourceServer.jwt(Customizer.withDefaults()));
+                .oauth2ResourceServer(resourceServer -> resourceServer.jwt(
+                     jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(customJWTAuthenticationConverter())
+                ));
 
         // CORS filter
         http.cors(Customizer.withDefaults());
@@ -32,5 +35,13 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
+    }
+
+    @Bean
+    public JwtAuthenticationConverter customJWTAuthenticationConverter() {
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(new JWTGrantedAuthoritiesConverter());
+
+        return converter;
     }
 }
