@@ -20,6 +20,9 @@ public class Coupon {
     @Column(name = "discount_code")
     private String discountCode;
 
+    @Column(name = "discount_percent")
+    private Integer discountPercent;
+
     @Column(name = "valid_from")
     private Date validFrom;
 

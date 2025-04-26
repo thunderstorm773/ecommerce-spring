@@ -9,6 +9,8 @@ public class CouponView {
 
     private String discountCode;
 
+    private Integer discountPercent;
+
     private Date validFrom;
 
     private Date validTo;
