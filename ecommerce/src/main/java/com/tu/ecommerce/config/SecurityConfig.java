@@ -18,7 +18,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // protects endpoints
         http.authorizeHttpRequests(requests ->
-                requests.requestMatchers("/api/orders/**")
+                requests.requestMatchers("/api/orders/**", "/api/coupons/actives/**")
                         .authenticated()
                         .anyRequest().permitAll())
                 .oauth2ResourceServer(resourceServer -> resourceServer.jwt(

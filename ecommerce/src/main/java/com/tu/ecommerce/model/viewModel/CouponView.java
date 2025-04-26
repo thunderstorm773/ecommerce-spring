@@ -1,0 +1,17 @@
+package com.tu.ecommerce.model.viewModel;
+
+import lombok.Data;
+
+import java.util.Date;
+
+@Data
+public class CouponView {
+
+    private String discountCode;
+
+    private Date validFrom;
+
+    private Date validTo;
+
+    private Boolean status;
+}
