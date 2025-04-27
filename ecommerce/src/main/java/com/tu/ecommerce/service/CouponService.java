@@ -23,7 +23,16 @@ public class CouponService {
     }
 
     public Page<CouponView> getAllActiveCoupons(Pageable pageable) {
-        Page<Coupon> coupons = couponRepository.findAllActiveCoupons(pageable);
+        Page<Coupon> coupons = this.couponRepository.findAllActiveCoupons(pageable);
         return this.modelMapperUtil.convertToPage(pageable, coupons, CouponView.class);
+    }
+
+    public CouponView checkIsActiveCoupon(String couponCode) {
+        Coupon coupon = this.couponRepository.checkIsActiveCoupon(couponCode);
+        if (coupon != null) {
+            return this.modelMapperUtil.getModelMapper().map(coupon, CouponView.class);
+        }
+
+        return null;
     }
 }

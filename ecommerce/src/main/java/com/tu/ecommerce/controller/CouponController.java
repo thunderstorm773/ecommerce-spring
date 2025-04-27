@@ -5,6 +5,7 @@ import com.tu.ecommerce.service.CouponService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,6 +21,11 @@ public class CouponController {
 
     @GetMapping("actives")
     public Page<CouponView> getAllActiveCoupons(Pageable pageable) {
-        return couponService.getAllActiveCoupons(pageable);
+        return this.couponService.getAllActiveCoupons(pageable);
+    }
+
+    @GetMapping("check-active/{couponCode}")
+    public CouponView checkIsActiveCoupon(@PathVariable String couponCode) {
+        return this.couponService.checkIsActiveCoupon(couponCode);
     }
 }
