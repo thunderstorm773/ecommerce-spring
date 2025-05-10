@@ -2,6 +2,7 @@ package com.tu.ecommerce.service;
 
 import com.tu.ecommerce.dao.ProductCategoryRepository;
 import com.tu.ecommerce.entity.ProductCategory;
+import com.tu.ecommerce.model.viewModel.ProductCategoryAdminView;
 import com.tu.ecommerce.model.viewModel.ProductCategoryView;
 import com.tu.ecommerce.util.ModelMapperUtil;
 import org.springframework.data.domain.Page;
@@ -29,8 +30,8 @@ public class ProductCategoryService {
         return this.modelMapperUtil.convertAll(productCategories, ProductCategoryView.class);
     }
 
-    public Page<ProductCategoryView> getAllProductCategories(Pageable pageable) {
+    public Page<ProductCategoryAdminView> getAllProductCategories(Pageable pageable) {
         Page<ProductCategory> productCategories = this.productCategoryRepository.findAll(pageable);
-        return this.modelMapperUtil.convertToPage(pageable, productCategories, ProductCategoryView.class);
+        return this.modelMapperUtil.convertToPage(pageable, productCategories, ProductCategoryAdminView.class);
     }
 }

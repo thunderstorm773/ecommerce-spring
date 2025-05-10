@@ -1,6 +1,6 @@
 package com.tu.ecommerce.controller;
 
-import com.tu.ecommerce.model.viewModel.ProductCategoryView;
+import com.tu.ecommerce.model.viewModel.ProductCategoryAdminView;
 import com.tu.ecommerce.service.ProductCategoryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +19,7 @@ public class AdminController {
     }
 
     @GetMapping("product-categories")
-    public Page<ProductCategoryView> getAllProductCategories(Pageable pageable) {
+    public Page<ProductCategoryAdminView> getAllProductCategories(Pageable pageable) {
         return this.productCategoryService.getAllProductCategories(pageable);
     }
 }
