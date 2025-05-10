@@ -20,6 +20,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests(requests ->
                 requests.requestMatchers("/api/orders/**", "/api/coupons/actives/**")
                         .authenticated()
+                        .requestMatchers("/api/admin/product-categories/**")
+                        .hasAuthority("Admin")
                         .anyRequest().permitAll())
                 .oauth2ResourceServer(resourceServer -> resourceServer.jwt(
                      jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(customJWTAuthenticationConverter())

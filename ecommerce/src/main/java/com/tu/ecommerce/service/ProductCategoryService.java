@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductCategoryService {
 
@@ -20,6 +22,11 @@ public class ProductCategoryService {
 
         this.productCategoryRepository = productCategoryRepository;
         this.modelMapperUtil = modelMapperUtil;
+    }
+
+    public List<ProductCategoryView> getAllActiveProductCategories() {
+        List<ProductCategory> productCategories = this.productCategoryRepository.findAllActive();
+        return this.modelMapperUtil.convertAll(productCategories, ProductCategoryView.class);
     }
 
     public Page<ProductCategoryView> getAllProductCategories(Pageable pageable) {

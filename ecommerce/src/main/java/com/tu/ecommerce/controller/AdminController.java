@@ -2,24 +2,24 @@ package com.tu.ecommerce.controller;
 
 import com.tu.ecommerce.model.viewModel.ProductCategoryView;
 import com.tu.ecommerce.service.ProductCategoryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/product-categories")
-public class ProductCategoryController {
+@RequestMapping("/api/admin")
+public class AdminController {
 
     private final ProductCategoryService productCategoryService;
 
-    public ProductCategoryController(ProductCategoryService productCategoryService) {
+    public AdminController(ProductCategoryService productCategoryService) {
         this.productCategoryService = productCategoryService;
     }
 
-    @GetMapping("")
-    public List<ProductCategoryView> getAllActiveProductCategories() {
-        return this.productCategoryService.getAllActiveProductCategories();
+    @GetMapping("product-categories")
+    public Page<ProductCategoryView> getAllProductCategories(Pageable pageable) {
+        return this.productCategoryService.getAllProductCategories(pageable);
     }
 }
