@@ -34,4 +34,13 @@ public class ProductCategoryService {
         Page<ProductCategory> productCategories = this.productCategoryRepository.findAll(pageable);
         return this.modelMapperUtil.convertToPage(pageable, productCategories, ProductCategoryAdminView.class);
     }
+
+    public ProductCategoryView getProductCategoryById(Long id) {
+        ProductCategory productCategory = this.productCategoryRepository.findById(id).orElse(null);
+        if (productCategory != null) {
+            return this.modelMapperUtil.getModelMapper().map(productCategory, ProductCategoryView.class);
+        }
+
+        return null;
+    }
 }
