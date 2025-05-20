@@ -43,4 +43,13 @@ public class ProductCategoryService {
 
         return null;
     }
+
+    public ProductCategoryView getProductCategoryByName(String categoryName) {
+        ProductCategory productCategory = this.productCategoryRepository.getProductCategoryByCategoryName(categoryName);
+        if (productCategory != null) {
+            return this.modelMapperUtil.getModelMapper().map(productCategory, ProductCategoryView.class);
+        }
+
+        return null;
+    }
 }

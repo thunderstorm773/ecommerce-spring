@@ -15,4 +15,6 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
     @Query(value = "SELECT c FROM ProductCategory c " +
                    "WHERE c.isActive = 1")
     List<ProductCategory> findAllActive();
+
+    ProductCategory getProductCategoryByCategoryName(String categoryName);
 }
