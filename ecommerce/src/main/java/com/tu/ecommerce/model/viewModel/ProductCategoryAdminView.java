@@ -11,7 +11,7 @@ public class ProductCategoryAdminView {
 
     private String categoryName;
 
-    private Date lastUpdate;
+    private Date lastUpdated;
 
     private Integer isActive;
 }

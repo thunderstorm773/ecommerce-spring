@@ -1,14 +1,13 @@
 package com.tu.ecommerce.controller;
 
+import com.tu.ecommerce.model.bindingModel.CreateCategory;
 import com.tu.ecommerce.model.viewModel.ProductCategoryAdminView;
 import com.tu.ecommerce.model.viewModel.ProductCategoryView;
 import com.tu.ecommerce.service.ProductCategoryService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -28,5 +27,10 @@ public class AdminController {
     @GetMapping("product-categories/{id}")
     public ProductCategoryView getProductCategory(@PathVariable("id") Long id) {
         return this.productCategoryService.getProductCategoryById(id);
+    }
+
+    @PostMapping("product-categories/add")
+    public ProductCategoryView createProductCategory(@Valid @RequestBody CreateCategory createCategory) {
+        return this.productCategoryService.createProductCategory(createCategory);
     }
 }
