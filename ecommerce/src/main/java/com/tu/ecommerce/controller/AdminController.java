@@ -1,6 +1,7 @@
 package com.tu.ecommerce.controller;
 
 import com.tu.ecommerce.model.bindingModel.CreateCategory;
+import com.tu.ecommerce.model.bindingModel.EditCategory;
 import com.tu.ecommerce.model.viewModel.ProductCategoryAdminView;
 import com.tu.ecommerce.model.viewModel.ProductCategoryView;
 import com.tu.ecommerce.service.ProductCategoryService;
@@ -32,5 +33,11 @@ public class AdminController {
     @PostMapping("product-categories/add")
     public ProductCategoryView createProductCategory(@Valid @RequestBody CreateCategory createCategory) {
         return this.productCategoryService.createProductCategory(createCategory);
+    }
+
+    @PutMapping("product-categories/edit/{id}")
+    public ProductCategoryView editProductCategory(@PathVariable("id") Long id,
+                                                   @Valid @RequestBody EditCategory editCategory) {
+        return this.productCategoryService.editProductCategory(id, editCategory);
     }
 }

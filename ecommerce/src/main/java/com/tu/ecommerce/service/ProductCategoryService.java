@@ -3,6 +3,7 @@ package com.tu.ecommerce.service;
 import com.tu.ecommerce.dao.ProductCategoryRepository;
 import com.tu.ecommerce.entity.ProductCategory;
 import com.tu.ecommerce.model.bindingModel.CreateCategory;
+import com.tu.ecommerce.model.bindingModel.EditCategory;
 import com.tu.ecommerce.model.viewModel.ProductCategoryAdminView;
 import com.tu.ecommerce.model.viewModel.ProductCategoryView;
 import com.tu.ecommerce.util.ModelMapperUtil;
@@ -57,13 +58,20 @@ public class ProductCategoryService {
     }
 
     public ProductCategoryView createProductCategory(CreateCategory createCategory) {
-        ProductCategory existingProductCategory = this.productCategoryRepository.getProductCategoryByCategoryName(createCategory.getCategoryName());
-        if (existingProductCategory != null) {
-            throw new RuntimeException("Category Name already exists");
-        }
-
         ProductCategory productCategory = this.modelMapperUtil.getModelMapper().map(createCategory, ProductCategory.class);
         productCategory.setIsActive(1);
+        this.productCategoryRepository.save(productCategory);
+
+        return this.modelMapperUtil.getModelMapper().map(productCategory, ProductCategoryView.class);
+    }
+
+    public ProductCategoryView editProductCategory(Long id, EditCategory editCategory) {
+        ProductCategory productCategory = this.productCategoryRepository.findById(id).orElse(null);
+        if (productCategory == null) {
+            throw new RuntimeException("Category Id does not exists");
+        }
+
+        this.modelMapperUtil.getModelMapper().map(editCategory, productCategory);
         this.productCategoryRepository.save(productCategory);
 
         return this.modelMapperUtil.getModelMapper().map(productCategory, ProductCategoryView.class);
