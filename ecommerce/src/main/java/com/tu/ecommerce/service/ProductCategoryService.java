@@ -68,7 +68,7 @@ public class ProductCategoryService {
     public ProductCategoryView editProductCategory(Long id, EditCategory editCategory) {
         ProductCategory productCategory = this.productCategoryRepository.findById(id).orElse(null);
         if (productCategory == null) {
-            throw new RuntimeException("Category Id does not exists");
+            throw new RuntimeException("Category does not exists");
         }
 
         this.modelMapperUtil.getModelMapper().map(editCategory, productCategory);
@@ -77,4 +77,15 @@ public class ProductCategoryService {
         return this.modelMapperUtil.getModelMapper().map(productCategory, ProductCategoryView.class);
     }
 
+    public ProductCategoryView deleteProductCategory(Long id) {
+        ProductCategory productCategory = this.productCategoryRepository.findById(id).orElse(null);
+        if (productCategory == null) {
+            throw new RuntimeException("Category does not exists");
+        }
+
+        productCategory.setIsActive(0);
+        this.productCategoryRepository.save(productCategory);
+
+        return this.modelMapperUtil.getModelMapper().map(productCategory, ProductCategoryView.class);
+    }
 }

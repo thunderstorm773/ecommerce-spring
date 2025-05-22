@@ -40,4 +40,9 @@ public class AdminController {
                                                    @Valid @RequestBody EditCategory editCategory) {
         return this.productCategoryService.editProductCategory(id, editCategory);
     }
+
+    @DeleteMapping("product-categories/delete/{id}")
+    public ProductCategoryView deleteProductCategory(@PathVariable("id") Long id) {
+        return this.productCategoryService.deleteProductCategory(id);
+    }
 }

@@ -26,6 +26,6 @@ public class GlobalExceptionHandler {
         body.put("timestamp", LocalDateTime.now());
         body.put("message", ex.getMessage());
 
-        return ResponseEntity.internalServerError().body(body);
+        return ResponseEntity.badRequest().body(body);
     }
 }
