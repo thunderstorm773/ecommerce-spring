@@ -29,21 +29,21 @@ public class ProductService {
         Page<Product> products;
 
         if (StringUtils.hasText(name)) {
-            products = this.productRepository.findProductByNameContaining(name, pageable);
+            products = this.productRepository.findAllByNameContainingWithActiveCategory(name, pageable);
         } else {
-            products = this.productRepository.findAll(pageable);
+            products = this.productRepository.findAllWithActiveCategory(pageable);
         }
 
         return this.modelMapperUtil.convertToPage(pageable, products, ProductView.class);
     }
 
     public Page<ProductView> getProductsByCategoryId(Long categoryId, Pageable pageable) {
-        Page<Product> products = this.productRepository.findProductsByCategoryId(categoryId, pageable);
+        Page<Product> products = this.productRepository.findAllByActiveCategoryId(categoryId, pageable);
         return this.modelMapperUtil.convertToPage(pageable, products, ProductView.class);
     }
 
     public ProductView getProduct(Long id) {
-        Optional<Product> product = this.productRepository.findById(id);
+        Optional<Product> product = this.productRepository.findIdWithActiveCategory(id);
         return product.map(value -> this.modelMapperUtil.getModelMapper().map(value, ProductView.class))
                 .orElse(null);
     }
