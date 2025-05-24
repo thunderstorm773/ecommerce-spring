@@ -92,4 +92,20 @@ public class ProductCategoryService {
 
         return this.modelMapperUtil.getModelMapper().map(productCategory, ProductCategoryView.class);
     }
+
+    public ProductCategoryView activateProductCategory(Long id) {
+        ProductCategory productCategory = this.productCategoryRepository.findById(id).orElse(null);
+        if (productCategory == null) {
+            throw new RuntimeException("Category does not exists");
+        }
+
+        if (productCategory.getIsActive() == 1) {
+            throw new RuntimeException("Category is already activated");
+        }
+
+        productCategory.setIsActive(1);
+        this.productCategoryRepository.save(productCategory);
+
+        return this.modelMapperUtil.getModelMapper().map(productCategory, ProductCategoryView.class);
+    }
 }

@@ -45,4 +45,9 @@ public class AdminController {
     public ProductCategoryView deactivateProductCategory(@PathVariable("id") Long id) {
         return this.productCategoryService.deactivateProductCategory(id);
     }
+
+    @PostMapping("product-categories/activate/{id}")
+    public ProductCategoryView activateProductCategory(@PathVariable("id") Long id) {
+        return this.productCategoryService.activateProductCategory(id);
+    }
 }
