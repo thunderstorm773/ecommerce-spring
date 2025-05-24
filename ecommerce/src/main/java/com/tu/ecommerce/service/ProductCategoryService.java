@@ -77,10 +77,14 @@ public class ProductCategoryService {
         return this.modelMapperUtil.getModelMapper().map(productCategory, ProductCategoryView.class);
     }
 
-    public ProductCategoryView deleteProductCategory(Long id) {
+    public ProductCategoryView deactivateProductCategory(Long id) {
         ProductCategory productCategory = this.productCategoryRepository.findById(id).orElse(null);
         if (productCategory == null) {
             throw new RuntimeException("Category does not exists");
+        }
+
+        if (productCategory.getIsActive() == 0) {
+            throw new RuntimeException("Category is already deactivated");
         }
 
         productCategory.setIsActive(0);
