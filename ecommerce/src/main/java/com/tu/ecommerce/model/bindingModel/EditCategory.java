@@ -8,8 +8,8 @@ import lombok.Data;
 @Data
 public class EditCategory {
 
-    @NotBlank(message = "Category Name is required")
-    @Size(min = 2, message = "Category Name must be at least 2 characters long")
+    @NotBlank(message = "Category name is required")
+    @Size(min = 2, message = "Category name must be at least 2 characters long")
     @UniqueCategory
     private String categoryName;
 }

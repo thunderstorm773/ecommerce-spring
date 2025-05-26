@@ -1,9 +1,13 @@
 package com.tu.ecommerce.controller;
 
 import com.tu.ecommerce.model.bindingModel.CreateCategory;
+import com.tu.ecommerce.model.bindingModel.CreateCoupon;
 import com.tu.ecommerce.model.bindingModel.EditCategory;
+import com.tu.ecommerce.model.bindingModel.EditCoupon;
+import com.tu.ecommerce.model.viewModel.CouponView;
 import com.tu.ecommerce.model.viewModel.ProductCategoryAdminView;
 import com.tu.ecommerce.model.viewModel.ProductCategoryView;
+import com.tu.ecommerce.service.CouponService;
 import com.tu.ecommerce.service.ProductCategoryService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -16,8 +20,12 @@ public class AdminController {
 
     private final ProductCategoryService productCategoryService;
 
-    public AdminController(ProductCategoryService productCategoryService) {
+    private final CouponService couponService;
+
+    public AdminController(ProductCategoryService productCategoryService,
+                           CouponService couponService) {
         this.productCategoryService = productCategoryService;
+        this.couponService = couponService;
     }
 
     @GetMapping("product-categories")
@@ -49,5 +57,21 @@ public class AdminController {
     @PostMapping("product-categories/activate/{id}")
     public ProductCategoryView activateProductCategory(@PathVariable("id") Long id) {
         return this.productCategoryService.activateProductCategory(id);
+    }
+
+    @PostMapping("coupons/add")
+    public CouponView createCoupon(@Valid @RequestBody CreateCoupon createCoupon) {
+        return this.couponService.createCoupon(createCoupon);
+    }
+
+    @PutMapping("coupons/edit/{id}")
+    public CouponView editCoupon(@PathVariable("id") Long id,
+                                 @Valid @RequestBody EditCoupon editCoupon) {
+        return this.couponService.editCoupon(id, editCoupon);
+    }
+
+    @DeleteMapping("coupons/delete/{id}")
+    public CouponView deleteCoupon(@PathVariable("id") Long id) {
+        return this.couponService.deleteCoupon(id);
     }
 }

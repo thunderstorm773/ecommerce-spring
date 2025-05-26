@@ -2,13 +2,17 @@ package com.tu.ecommerce.service;
 
 import com.tu.ecommerce.dao.CouponRepository;
 import com.tu.ecommerce.entity.Coupon;
+import com.tu.ecommerce.model.bindingModel.CreateCoupon;
+import com.tu.ecommerce.model.bindingModel.EditCoupon;
 import com.tu.ecommerce.model.viewModel.CouponView;
 import com.tu.ecommerce.util.ModelMapperUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class CouponService {
 
     private final CouponRepository couponRepository;
@@ -34,5 +38,39 @@ public class CouponService {
         }
 
         return null;
+    }
+
+    public CouponView createCoupon(CreateCoupon createCoupon) {
+        Coupon coupon = this.modelMapperUtil.getModelMapper().map(createCoupon, Coupon.class);
+
+        if (!createCoupon.getValidFrom().before(coupon.getValidTo())) {
+            throw new RuntimeException("Valid from must be before valid to");
+        }
+
+        coupon.setStatus(true);
+        this.couponRepository.save(coupon);
+        return this.modelMapperUtil.getModelMapper().map(coupon, CouponView.class);
+    }
+
+    public CouponView editCoupon(Long id, EditCoupon editCoupon) {
+        Coupon coupon = this.couponRepository.findById(id).orElse(null);
+        if (coupon == null) {
+            throw new RuntimeException("Coupon does not exists");
+        }
+
+        this.modelMapperUtil.getModelMapper().map(editCoupon, coupon);
+        this.couponRepository.save(coupon);
+
+        return this.modelMapperUtil.getModelMapper().map(coupon, CouponView.class);
+    }
+
+    public CouponView deleteCoupon(Long id) {
+        Coupon coupon = this.couponRepository.findById(id).orElse(null);
+        if (coupon == null) {
+            throw new RuntimeException("Coupon does not exists");
+        }
+
+        this.couponRepository.delete(coupon);
+        return this.modelMapperUtil.getModelMapper().map(coupon, CouponView.class);
     }
 }
