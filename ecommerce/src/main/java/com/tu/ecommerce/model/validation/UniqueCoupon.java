@@ -11,10 +11,10 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
-@Constraint(validatedBy = UniqueCategoryValidator.class)
-public @interface UniqueCategory {
+@Constraint(validatedBy = UniqueCouponValidator.class)
+public @interface UniqueCoupon {
 
-    String message() default "Category name already exists";
+    String message() default "Coupon already exists";
 
     Class<?>[] groups() default {};
 

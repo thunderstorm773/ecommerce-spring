@@ -23,4 +23,6 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
                    "AND c.status = true " +
                    "AND c.discountCode = :couponCode")
     Coupon checkIsActiveCoupon(@Param("couponCode") String couponCode);
+
+    Coupon findByDiscountCode(String discountCode);
 }

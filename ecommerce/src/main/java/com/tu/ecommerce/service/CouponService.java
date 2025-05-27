@@ -31,6 +31,15 @@ public class CouponService {
         return this.modelMapperUtil.convertToPage(pageable, coupons, CouponView.class);
     }
 
+    public CouponView getCouponByDiscountCode(String discountCode) {
+        Coupon coupon = this.couponRepository.findByDiscountCode(discountCode);
+        if (coupon != null) {
+            return this.modelMapperUtil.getModelMapper().map(coupon, CouponView.class);
+        }
+
+        return null;
+    }
+
     public CouponView checkIsActiveCoupon(String couponCode) {
         Coupon coupon = this.couponRepository.checkIsActiveCoupon(couponCode);
         if (coupon != null) {

@@ -1,5 +1,6 @@
 package com.tu.ecommerce.model.bindingModel;
 
+import com.tu.ecommerce.model.validation.UniqueCoupon;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ public class CreateCoupon {
 
     @NotBlank(message = "Discount code is required")
     @Size(min = 4, message = "Discount code must be at least 4 characters long")
+    @UniqueCoupon
     private String discountCode;
 
     @NotNull(message = "Discount percent is required")
