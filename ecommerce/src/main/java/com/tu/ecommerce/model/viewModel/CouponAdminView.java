@@ -7,6 +7,8 @@ import java.util.Date;
 @Data
 public class CouponAdminView {
 
+    private Long id;
+
     private String discountCode;
 
     private Integer discountPercent;
