@@ -4,6 +4,7 @@ import com.tu.ecommerce.model.bindingModel.CreateCategory;
 import com.tu.ecommerce.model.bindingModel.CreateCoupon;
 import com.tu.ecommerce.model.bindingModel.EditCategory;
 import com.tu.ecommerce.model.bindingModel.EditCoupon;
+import com.tu.ecommerce.model.viewModel.CouponAdminView;
 import com.tu.ecommerce.model.viewModel.CouponView;
 import com.tu.ecommerce.model.viewModel.ProductCategoryAdminView;
 import com.tu.ecommerce.model.viewModel.ProductCategoryView;
@@ -57,6 +58,11 @@ public class AdminController {
     @PostMapping("product-categories/activate/{id}")
     public ProductCategoryView activateProductCategory(@PathVariable("id") Long id) {
         return this.productCategoryService.activateProductCategory(id);
+    }
+
+    @GetMapping("coupons")
+    public Page<CouponAdminView> getAllCoupons(Pageable pageable) {
+        return this.couponService.getAllCoupons(pageable);
     }
 
     @PostMapping("coupons/add")

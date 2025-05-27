@@ -4,6 +4,7 @@ import com.tu.ecommerce.dao.CouponRepository;
 import com.tu.ecommerce.entity.Coupon;
 import com.tu.ecommerce.model.bindingModel.CreateCoupon;
 import com.tu.ecommerce.model.bindingModel.EditCoupon;
+import com.tu.ecommerce.model.viewModel.CouponAdminView;
 import com.tu.ecommerce.model.viewModel.CouponView;
 import com.tu.ecommerce.util.ModelMapperUtil;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,11 @@ public class CouponService {
     public Page<CouponView> getAllActiveCoupons(Pageable pageable) {
         Page<Coupon> coupons = this.couponRepository.findAllActiveCoupons(pageable);
         return this.modelMapperUtil.convertToPage(pageable, coupons, CouponView.class);
+    }
+
+    public Page<CouponAdminView> getAllCoupons(Pageable pageable) {
+        Page<Coupon> coupons = this.couponRepository.findAll(pageable);
+        return this.modelMapperUtil.convertToPage(pageable, coupons, CouponAdminView.class);
     }
 
     public CouponView getCouponByDiscountCode(String discountCode) {
