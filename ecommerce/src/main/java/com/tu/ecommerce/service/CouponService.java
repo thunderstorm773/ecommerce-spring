@@ -73,6 +73,10 @@ public class CouponService {
             throw new RuntimeException("Coupon does not exists");
         }
 
+        if(!canEditCouponDiscountCode(id, editCoupon.getDiscountCode())) {
+            throw new RuntimeException("Coupon already exists");
+        }
+
         this.modelMapperUtil.getModelMapper().map(editCoupon, coupon);
         this.couponRepository.save(coupon);
 
@@ -87,5 +91,14 @@ public class CouponService {
 
         this.couponRepository.delete(coupon);
         return this.modelMapperUtil.getModelMapper().map(coupon, CouponView.class);
+    }
+
+    public boolean canEditCouponDiscountCode(Long id, String discountCode) {
+        CouponView coupon = this.getCouponByDiscountCode(discountCode);
+        if (id != null && coupon != null) {
+            return coupon.getId().equals(id);
+        }
+
+        return coupon == null;
     }
 }

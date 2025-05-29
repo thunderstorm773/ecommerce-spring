@@ -68,7 +68,11 @@ public class ProductCategoryService {
     public ProductCategoryView editProductCategory(Long id, EditCategory editCategory) {
         ProductCategory productCategory = this.productCategoryRepository.findById(id).orElse(null);
         if (productCategory == null) {
-            throw new RuntimeException("Category does not exists");
+            throw new RuntimeException("Product category does not exists");
+        }
+
+        if(!canEditProductCategoryName(id, editCategory.getCategoryName())) {
+            throw new RuntimeException("Product category already exists");
         }
 
         this.modelMapperUtil.getModelMapper().map(editCategory, productCategory);
@@ -80,11 +84,11 @@ public class ProductCategoryService {
     public ProductCategoryView deactivateProductCategory(Long id) {
         ProductCategory productCategory = this.productCategoryRepository.findById(id).orElse(null);
         if (productCategory == null) {
-            throw new RuntimeException("Category does not exists");
+            throw new RuntimeException("Product category does not exists");
         }
 
         if (productCategory.getIsActive() == 0) {
-            throw new RuntimeException("Category is already deactivated");
+            throw new RuntimeException("Product category is already deactivated");
         }
 
         productCategory.setIsActive(0);
@@ -96,16 +100,25 @@ public class ProductCategoryService {
     public ProductCategoryView activateProductCategory(Long id) {
         ProductCategory productCategory = this.productCategoryRepository.findById(id).orElse(null);
         if (productCategory == null) {
-            throw new RuntimeException("Category does not exists");
+            throw new RuntimeException("Product category does not exists");
         }
 
         if (productCategory.getIsActive() == 1) {
-            throw new RuntimeException("Category is already activated");
+            throw new RuntimeException("Product category is already activated");
         }
 
         productCategory.setIsActive(1);
         this.productCategoryRepository.save(productCategory);
 
         return this.modelMapperUtil.getModelMapper().map(productCategory, ProductCategoryView.class);
+    }
+
+    public boolean canEditProductCategoryName(Long id, String productCategoryName) {
+        ProductCategoryView productCategory = this.getProductCategoryByName(productCategoryName);
+        if (id != null && productCategory != null) {
+            return productCategory.getId().equals(id);
+        }
+
+        return productCategory == null;
     }
 }

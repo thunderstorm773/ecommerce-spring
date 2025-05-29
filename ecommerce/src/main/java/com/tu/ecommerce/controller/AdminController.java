@@ -39,6 +39,12 @@ public class AdminController {
         return this.productCategoryService.getProductCategoryById(id);
     }
 
+    @GetMapping("product-categories/can-edit-name")
+    public boolean canEditProductCategoryName(@RequestParam(value = "id", required = false) Long id,
+                                              @RequestParam(value = "name") String categoryName) {
+        return this.productCategoryService.canEditProductCategoryName(id, categoryName);
+    }
+
     @PostMapping("product-categories/add")
     public ProductCategoryView createProductCategory(@Valid @RequestBody CreateCategory createCategory) {
         return this.productCategoryService.createProductCategory(createCategory);
@@ -63,6 +69,12 @@ public class AdminController {
     @GetMapping("coupons")
     public Page<CouponAdminView> getAllCoupons(Pageable pageable) {
         return this.couponService.getAllCoupons(pageable);
+    }
+
+    @GetMapping("coupons/can-edit-discount-code")
+    public boolean canEditCouponDiscountCode(@RequestParam(value = "id", required = false) Long id,
+                                             @RequestParam(value = "discountCode") String discountCode) {
+        return this.couponService.canEditCouponDiscountCode(id, discountCode);
     }
 
     @PostMapping("coupons/add")
