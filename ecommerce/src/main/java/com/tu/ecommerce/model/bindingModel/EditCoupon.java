@@ -25,6 +25,5 @@ public class EditCoupon {
     @Future(message = "Valid to must be a date in the future")
     private Date validTo;
 
-    @NotNull(message = "Status is required")
-    private Boolean status;
+    private boolean status;
 }
