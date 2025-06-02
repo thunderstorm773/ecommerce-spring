@@ -55,6 +55,15 @@ public class CouponService {
         return null;
     }
 
+    public CouponView getCouponById(Long id) {
+        Coupon coupon = this.couponRepository.findById(id).orElse(null);
+        if (coupon != null) {
+            return this.modelMapperUtil.getModelMapper().map(coupon, CouponView.class);
+        }
+
+        return null;
+    }
+
     public CouponView createCoupon(CreateCoupon createCoupon) {
         Coupon coupon = this.modelMapperUtil.getModelMapper().map(createCoupon, Coupon.class);
 

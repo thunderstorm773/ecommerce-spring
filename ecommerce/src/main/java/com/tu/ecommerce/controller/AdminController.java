@@ -71,6 +71,11 @@ public class AdminController {
         return this.couponService.getAllCoupons(pageable);
     }
 
+    @GetMapping("coupons/{id}")
+    public CouponView getCoupon(@PathVariable("id") Long id) {
+        return this.couponService.getCouponById(id);
+    }
+
     @GetMapping("coupons/can-edit-discount-code")
     public boolean canEditCouponDiscountCode(@RequestParam(value = "id", required = false) Long id,
                                              @RequestParam(value = "discountCode") String discountCode) {
