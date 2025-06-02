@@ -62,7 +62,6 @@ public class CouponService {
             throw new RuntimeException("Valid from must be before valid to");
         }
 
-        coupon.setStatus(true);
         this.couponRepository.save(coupon);
         return this.modelMapperUtil.getModelMapper().map(coupon, CouponView.class);
     }
