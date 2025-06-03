@@ -85,6 +85,10 @@ public class CouponService {
             throw new RuntimeException("Coupon already exists");
         }
 
+        if (!editCoupon.getValidFrom().before(coupon.getValidTo())) {
+            throw new RuntimeException("Valid from must be before valid to");
+        }
+
         this.modelMapperUtil.getModelMapper().map(editCoupon, coupon);
         this.couponRepository.save(coupon);
 
