@@ -18,7 +18,6 @@ public class EditCoupon {
     private Integer discountPercent;
 
     @NotNull(message = "Valid from is required")
-    @FutureOrPresent(message = "Valid from must be a date in the present or future")
     private Date validFrom;
 
     @NotNull(message = "Valid to is required")
