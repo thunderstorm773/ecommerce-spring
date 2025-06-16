@@ -18,7 +18,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // protects endpoints
         http.authorizeHttpRequests(requests ->
-                requests.requestMatchers("/api/orders/**", "/api/coupons/actives", "/api/checkout/**")
+                requests.requestMatchers("/api/comments/product/**")
+                        .permitAll()
+                        .requestMatchers("/api/orders/**", "/api/coupons/actives", "/api/checkout/**",
+                                         "/api/comments/**")
                         .authenticated()
                         .requestMatchers("/api/admin/product-categories/**", "/api/admin/coupons/**")
                         .hasAuthority("Admin")
