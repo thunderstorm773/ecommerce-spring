@@ -1,9 +1,14 @@
 package com.tu.ecommerce.controller;
 
+import com.tu.ecommerce.model.bindingModel.CreateComment;
+import com.tu.ecommerce.model.bindingModel.EditComment;
 import com.tu.ecommerce.model.viewModel.CommentView;
 import com.tu.ecommerce.service.CommentService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,8 +26,22 @@ public class CommentController {
         return this.commentService.getAllCommentsByProduct(productId, pageable);
     }
 
+    @PostMapping("add")
+    public CommentView createComment(@Valid @RequestBody CreateComment createComment,
+                                     @AuthenticationPrincipal Jwt jwt) {
+        return this.commentService.createComment(createComment, jwt);
+    }
+
+    @PutMapping("edit/{id}")
+    public CommentView editComment(@PathVariable("id") Long id,
+                                   @Valid @RequestBody EditComment editComment,
+                                   @AuthenticationPrincipal Jwt jwt) {
+        return this.commentService.editComment(id, editComment, jwt);
+    }
+
     @DeleteMapping("{id}")
-    public CommentView deleteComment(@PathVariable("id") Long id) {
-        return this.commentService.deleteComment(id);
+    public CommentView deleteComment(@PathVariable("id") Long id,
+                                     @AuthenticationPrincipal Jwt jwt) {
+        return this.commentService.deleteComment(id, jwt);
     }
 }

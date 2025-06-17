@@ -2,6 +2,8 @@ package com.tu.ecommerce.util;
 
 import lombok.Getter;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,7 @@ public class ModelMapperUtil {
 
     public ModelMapperUtil(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
+        this.modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
     public <S, D> List<D> convertAll(List<S> source, Class<D> destination) {
