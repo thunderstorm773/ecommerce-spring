@@ -22,7 +22,7 @@ public class CommentController {
     }
 
     @GetMapping("product/{id}")
-    public Page<CommentView> getProductsByCategoryId(@PathVariable("id") Long productId, Pageable pageable) {
+    public Page<CommentView> getCommentsByProduct(@PathVariable("id") Long productId, Pageable pageable) {
         return this.commentService.getAllCommentsByProduct(productId, pageable);
     }
 
