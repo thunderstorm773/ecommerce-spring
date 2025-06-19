@@ -39,7 +39,7 @@ public class CommentController {
         return this.commentService.editComment(id, editComment, jwt);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("delete/{id}")
     public CommentView deleteComment(@PathVariable("id") Long id,
                                      @AuthenticationPrincipal Jwt jwt) {
         return this.commentService.deleteComment(id, jwt);
