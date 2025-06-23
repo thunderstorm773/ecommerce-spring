@@ -37,7 +37,7 @@ public class CommentService {
     }
 
     public Page<CommentView> getAllCommentsByProduct(Long productId, Pageable pageable) {
-        Page<Comment> comments = this.commentRepository.findAllByProduct_Id(productId, pageable);
+        Page<Comment> comments = this.commentRepository.findAllByProduct_IdOrderByIdDesc(productId, pageable);
         return this.modelMapperUtil.convertToPage(pageable, comments, CommentView.class);
     }
 
