@@ -5,7 +5,6 @@ import com.tu.ecommerce.dao.ProductRepository;
 import com.tu.ecommerce.entity.Comment;
 import com.tu.ecommerce.entity.Product;
 import com.tu.ecommerce.model.bindingModel.CreateComment;
-import com.tu.ecommerce.model.bindingModel.EditComment;
 import com.tu.ecommerce.model.viewModel.CommentView;
 import com.tu.ecommerce.util.ModelMapperUtil;
 import com.tu.ecommerce.util.UserUtil;
@@ -52,24 +51,6 @@ public class CommentService {
         comment.setUsername(UserUtil.getUsername(jwt));
 
         this.commentRepository.save(comment);
-        return this.modelMapperUtil.getModelMapper().map(comment, CommentView.class);
-    }
-
-    public CommentView editComment(Long id, EditComment editComment, Jwt jwt) {
-        Comment comment = this.commentRepository.findById(id).orElse(null);
-        if (comment == null) {
-            throw new RuntimeException("Comment does not exist");
-        }
-
-        String loggedUsername = UserUtil.getUsername(jwt);
-        List<String> loggedUserAuthorities = UserUtil.getUserAuthorities(jwt);
-        if(!comment.getUsername().equals(loggedUsername) && !loggedUserAuthorities.contains("Admin")) {
-            throw new RuntimeException("You do not have permission to edit this comment(author or admin)");
-        }
-
-        this.modelMapperUtil.getModelMapper().map(editComment, comment);
-        this.commentRepository.save(comment);
-
         return this.modelMapperUtil.getModelMapper().map(comment, CommentView.class);
     }
 

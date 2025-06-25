@@ -13,5 +13,7 @@ public class CommentView {
 
     private String username;
 
+    private String userFullname;
+
     private Date dateCreated;
 }

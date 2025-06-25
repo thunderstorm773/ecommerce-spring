@@ -25,6 +25,9 @@ public class Comment {
     @Column(name = "username")
     private String username;
 
+    @Column(name = "user_fullname")
+    private String userFullname;
+
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "product_id")
     private Product product;

@@ -1,7 +1,6 @@
 package com.tu.ecommerce.controller;
 
 import com.tu.ecommerce.model.bindingModel.CreateComment;
-import com.tu.ecommerce.model.bindingModel.EditComment;
 import com.tu.ecommerce.model.viewModel.CommentView;
 import com.tu.ecommerce.service.CommentService;
 import jakarta.validation.Valid;
@@ -30,13 +29,6 @@ public class CommentController {
     public CommentView createComment(@Valid @RequestBody CreateComment createComment,
                                      @AuthenticationPrincipal Jwt jwt) {
         return this.commentService.createComment(createComment, jwt);
-    }
-
-    @PutMapping("edit/{id}")
-    public CommentView editComment(@PathVariable("id") Long id,
-                                   @Valid @RequestBody EditComment editComment,
-                                   @AuthenticationPrincipal Jwt jwt) {
-        return this.commentService.editComment(id, editComment, jwt);
     }
 
     @DeleteMapping("delete/{id}")
