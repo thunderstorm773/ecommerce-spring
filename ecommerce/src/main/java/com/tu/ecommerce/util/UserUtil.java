@@ -13,4 +13,8 @@ public class UserUtil {
     public static List<String> getUserAuthorities(Jwt jwt) {
         return jwt.getClaimAsStringList("groups");
     }
+
+    public static String getUserFullname(Jwt jwt) {
+        return jwt.getClaimAsString("fullname");
+    }
 }

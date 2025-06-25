@@ -49,6 +49,7 @@ public class CommentService {
         Comment comment = this.modelMapperUtil.getModelMapper().map(createComment, Comment.class);
         comment.setProduct(product);
         comment.setUsername(UserUtil.getUsername(jwt));
+        comment.setUserFullname(UserUtil.getUserFullname(jwt));
 
         this.commentRepository.save(comment);
         return this.modelMapperUtil.getModelMapper().map(comment, CommentView.class);
