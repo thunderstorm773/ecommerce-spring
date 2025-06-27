@@ -51,6 +51,11 @@ public class CheckoutService {
 
         for (OrderItem orderItem : orderItems) {
             Product product = this.productRepository.findById(orderItem.getProduct().getId()).orElse(null);
+            if (product != null) {
+                int newUnitsInStock = Math.max(product.getUnitsInStock() - orderItem.getQuantity(), 0);
+                product.setUnitsInStock(newUnitsInStock);
+            }
+
             orderItem.setProduct(product);
             order.addOrderItem(orderItem);
         }

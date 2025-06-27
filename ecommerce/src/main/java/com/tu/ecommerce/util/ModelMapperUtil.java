@@ -1,9 +1,12 @@
 package com.tu.ecommerce.util;
 
+import com.tu.ecommerce.entity.OrderItem;
+import com.tu.ecommerce.entity.Product;
+import com.tu.ecommerce.model.bindingModel.CreateOrderItem;
 import lombok.Getter;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +23,7 @@ public class ModelMapperUtil {
     public ModelMapperUtil(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
         this.modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        this.createCustomMappings();
     }
 
     public <S, D> List<D> convertAll(List<S> source, Class<D> destination) {
@@ -37,5 +41,20 @@ public class ModelMapperUtil {
         List<D> pageMappedContent = this.convertAll(pageContent, destination);
         long totalElements = source.getTotalElements();
         return new PageImpl<>(pageMappedContent, pageable, totalElements);
+    }
+
+    private void createCustomMappings() {;
+        TypeMap<CreateOrderItem, OrderItem> orderItemTypeMap = this.modelMapper.createTypeMap(CreateOrderItem.class, OrderItem.class);
+
+        orderItemTypeMap.setPostConverter(context -> {
+            CreateOrderItem source = context.getSource();
+            OrderItem dest = context.getDestination();
+
+            Product product = new Product();
+            product.setId(source.getProductId());
+            dest.setProduct(product);
+
+            return dest;
+        });
     }
 }
