@@ -4,12 +4,10 @@ import com.tu.ecommerce.model.bindingModel.CreateCategory;
 import com.tu.ecommerce.model.bindingModel.CreateCoupon;
 import com.tu.ecommerce.model.bindingModel.EditCategory;
 import com.tu.ecommerce.model.bindingModel.EditCoupon;
-import com.tu.ecommerce.model.viewModel.CouponAdminView;
-import com.tu.ecommerce.model.viewModel.CouponView;
-import com.tu.ecommerce.model.viewModel.ProductCategoryAdminView;
-import com.tu.ecommerce.model.viewModel.ProductCategoryView;
+import com.tu.ecommerce.model.viewModel.*;
 import com.tu.ecommerce.service.CouponService;
 import com.tu.ecommerce.service.ProductCategoryService;
+import com.tu.ecommerce.service.SystemParameterService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,10 +21,14 @@ public class AdminController {
 
     private final CouponService couponService;
 
+    private final SystemParameterService systemParameterService;
+
     public AdminController(ProductCategoryService productCategoryService,
-                           CouponService couponService) {
+                           CouponService couponService,
+                           SystemParameterService systemParameterService) {
         this.productCategoryService = productCategoryService;
         this.couponService = couponService;
+        this.systemParameterService = systemParameterService;
     }
 
     @GetMapping("product-categories")
@@ -96,5 +98,15 @@ public class AdminController {
     @DeleteMapping("coupons/delete/{id}")
     public CouponView deleteCoupon(@PathVariable("id") Long id) {
         return this.couponService.deleteCoupon(id);
+    }
+
+    @GetMapping("system-parameters")
+    public Page<SystemParameterView> getSystemParameters(Pageable pageable) {
+        return this.systemParameterService.getAllSystemParameters(pageable);
+    }
+
+    @GetMapping("system-parameters/{id}")
+    public SystemParameterView getSystemParameter(@PathVariable("id") Long id) {
+        return this.systemParameterService.getSystemParameter(id);
     }
 }
