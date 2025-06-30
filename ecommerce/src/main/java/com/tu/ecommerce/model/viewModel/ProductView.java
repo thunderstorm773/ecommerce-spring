@@ -18,6 +18,8 @@ public class ProductView {
 
     private BigDecimal unitPrice;
 
+    private BigDecimal unitPriceEur;
+
     private String imageUrl;
 
     private Boolean isActive;

@@ -31,6 +31,9 @@ public class Order {
     @Column(name = "total_price")
     private BigDecimal totalPrice;
 
+    @Column(name = "total_price_eur")
+    private BigDecimal totalPriceEur;
+
     @Column(name = "status")
     private String status;
 

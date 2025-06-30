@@ -30,6 +30,9 @@ public class Product {
     @Column(name = "unit_price")
     private BigDecimal unitPrice;
 
+    @Column(name = "unit_price_eur")
+    private BigDecimal unitPriceEur;
+
     @Column(name = "image_url")
     private String imageUrl;
 

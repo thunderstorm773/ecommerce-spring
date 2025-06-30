@@ -23,6 +23,9 @@ public class OrderItem {
     @Column(name = "unit_price")
     private BigDecimal unitPrice;
 
+    @Column(name = "unit_price_eur")
+    private BigDecimal unitPriceEur;
+
     @Column(name = "quantity")
     private int quantity;
 
