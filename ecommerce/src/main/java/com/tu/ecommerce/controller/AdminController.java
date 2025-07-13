@@ -1,9 +1,6 @@
 package com.tu.ecommerce.controller;
 
-import com.tu.ecommerce.model.bindingModel.CreateCategory;
-import com.tu.ecommerce.model.bindingModel.CreateCoupon;
-import com.tu.ecommerce.model.bindingModel.EditCategory;
-import com.tu.ecommerce.model.bindingModel.EditCoupon;
+import com.tu.ecommerce.model.bindingModel.*;
 import com.tu.ecommerce.model.viewModel.*;
 import com.tu.ecommerce.service.CouponService;
 import com.tu.ecommerce.service.ProductCategoryService;
@@ -108,5 +105,16 @@ public class AdminController {
     @GetMapping("system-parameters/{id}")
     public SystemParameterView getSystemParameter(@PathVariable("id") Long id) {
         return this.systemParameterService.getSystemParameter(id);
+    }
+
+    @PostMapping("system-parameters/add")
+    public SystemParameterView createSystemParameter(@Valid @RequestBody CreateSystemParameter createSystemParameter) {
+        return this.systemParameterService.createSystemParameter(createSystemParameter);
+    }
+
+    @PutMapping("system-parameters/edit/{id}")
+    public SystemParameterView editSystemParameter(@PathVariable("id") Long id,
+                                                   @Valid @RequestBody EditSystemParameter editSystemParameter) {
+        return this.systemParameterService.editSystemParameter(id, editSystemParameter);
     }
 }

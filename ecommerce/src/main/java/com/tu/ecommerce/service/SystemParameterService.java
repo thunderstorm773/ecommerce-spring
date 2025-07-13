@@ -2,6 +2,8 @@ package com.tu.ecommerce.service;
 
 import com.tu.ecommerce.dao.SystemParameterRepository;
 import com.tu.ecommerce.entity.SystemParameter;
+import com.tu.ecommerce.model.bindingModel.CreateSystemParameter;
+import com.tu.ecommerce.model.bindingModel.EditSystemParameter;
 import com.tu.ecommerce.model.viewModel.SystemParameterView;
 import com.tu.ecommerce.util.ModelMapperUtil;
 import org.springframework.data.domain.Page;
@@ -41,6 +43,25 @@ public class SystemParameterService {
         if (systemParameter == null) {
             return null;
         }
+
+        return this.modelMapperUtil.getModelMapper().map(systemParameter, SystemParameterView.class);
+    }
+
+    public SystemParameterView createSystemParameter(CreateSystemParameter createSystemParameter) {
+        SystemParameter systemParameter = this.modelMapperUtil.getModelMapper().map(createSystemParameter, SystemParameter.class);
+
+        this.systemParameterRepository.save(systemParameter);
+        return this.modelMapperUtil.getModelMapper().map(systemParameter, SystemParameterView.class);
+    }
+
+    public SystemParameterView editSystemParameter(Long id, EditSystemParameter editSystemParameter) {
+        SystemParameter systemParameter = this.systemParameterRepository.findById(id).orElse(null);
+        if (systemParameter == null) {
+            throw new RuntimeException("System parameter does not exists");
+        }
+
+        this.modelMapperUtil.getModelMapper().map(editSystemParameter, systemParameter);
+        this.systemParameterRepository.save(systemParameter);
 
         return this.modelMapperUtil.getModelMapper().map(systemParameter, SystemParameterView.class);
     }
