@@ -8,6 +8,8 @@ import java.util.Date;
 @Data
 public class OrderView {
 
+    private Long id;
+
     private String orderTrackingNumber;
 
     private int totalQuantity;
