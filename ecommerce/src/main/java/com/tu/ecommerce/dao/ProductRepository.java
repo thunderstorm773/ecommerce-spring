@@ -15,24 +15,34 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "SELECT p FROM Product p " +
                    "JOIN p.category c " +
-                   "WHERE c.isActive = 1")
-    Page<Product> findAllWithActiveCategory(Pageable pageable);
+                   "WHERE c.isActive = 1 " +
+                   "AND (:isAdmin = true OR p.isActive = true)")
+    Page<Product> findAllWithActiveCategory(@Param("isAdmin") boolean isAdmin,
+                                            Pageable pageable);
 
     @Query(value = "SELECT p FROM Product p " +
                    "JOIN p.category c " +
                    "WHERE c.id = :categoryId " +
-                   "AND c.isActive = 1")
-    Page<Product> findAllByActiveCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
+                   "AND c.isActive = 1 " +
+                   "AND (:isAdmin = true OR p.isActive = true)")
+    Page<Product> findAllByActiveCategoryId(@Param("categoryId") Long categoryId,
+                                            @Param("isAdmin") boolean isAdmin,
+                                            Pageable pageable);
 
     @Query(value = "SELECT p FROM Product p " +
                    "JOIN p.category c " +
                    "WHERE p.name LIKE CONCAT('%', :name, '%') " +
-                   "AND c.isActive = 1")
-    Page<Product> findAllByNameContainingWithActiveCategory(@Param("name") String name, Pageable pageable);
+                   "AND c.isActive = 1 " +
+                   "AND (:isAdmin = true OR p.isActive = true)")
+    Page<Product> findAllByNameContainingWithActiveCategory(@Param("name") String name,
+                                                            @Param("isAdmin") boolean isAdmin,
+                                                            Pageable pageable);
 
     @Query(value = "SELECT p FROM Product p " +
                    "JOIN p.category c " +
                    "WHERE p.id = :id " +
-                   "AND c.isActive = 1")
-    Optional<Product> findIdWithActiveCategory(@Param("id") Long id);
+                   "AND c.isActive = 1 " +
+                   "AND (:isAdmin = true OR p.isActive = true)")
+    Optional<Product> findIdWithActiveCategory(@Param("id") Long id,
+                                               @Param("isAdmin") boolean isAdmin);
 }

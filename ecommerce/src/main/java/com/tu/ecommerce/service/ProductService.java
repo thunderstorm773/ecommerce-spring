@@ -4,11 +4,14 @@ import com.tu.ecommerce.dao.ProductRepository;
 import com.tu.ecommerce.entity.Product;
 import com.tu.ecommerce.model.viewModel.ProductView;
 import com.tu.ecommerce.util.ModelMapperUtil;
+import com.tu.ecommerce.util.UserUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,25 +28,30 @@ public class ProductService {
         this.modelMapperUtil = modelMapperUtil;
     }
 
-    public Page<ProductView> getAllProducts(String name, Pageable pageable) {
+    public Page<ProductView> getAllProducts(String name, Jwt jwt, Pageable pageable) {
         Page<Product> products;
+        boolean isAdmin = UserUtil.isUserAdmin(jwt);
 
         if (StringUtils.hasText(name)) {
-            products = this.productRepository.findAllByNameContainingWithActiveCategory(name, pageable);
+            products = this.productRepository.findAllByNameContainingWithActiveCategory(name, isAdmin, pageable);
         } else {
-            products = this.productRepository.findAllWithActiveCategory(pageable);
+            products = this.productRepository.findAllWithActiveCategory(isAdmin, pageable);
         }
 
         return this.modelMapperUtil.convertToPage(pageable, products, ProductView.class);
     }
 
-    public Page<ProductView> getProductsByCategoryId(Long categoryId, Pageable pageable) {
-        Page<Product> products = this.productRepository.findAllByActiveCategoryId(categoryId, pageable);
+    public Page<ProductView> getProductsByCategoryId(Long categoryId, Jwt jwt, Pageable pageable) {
+        boolean isAdmin = UserUtil.isUserAdmin(jwt);
+
+        Page<Product> products = this.productRepository.findAllByActiveCategoryId(categoryId, isAdmin, pageable);
         return this.modelMapperUtil.convertToPage(pageable, products, ProductView.class);
     }
 
-    public ProductView getProduct(Long id) {
-        Optional<Product> product = this.productRepository.findIdWithActiveCategory(id);
+    public ProductView getProduct(Long id, Jwt jwt) {
+        boolean isAdmin = UserUtil.isUserAdmin(jwt);
+
+        Optional<Product> product = this.productRepository.findIdWithActiveCategory(id, isAdmin);
         return product.map(value -> this.modelMapperUtil.getModelMapper().map(value, ProductView.class))
                 .orElse(null);
     }
