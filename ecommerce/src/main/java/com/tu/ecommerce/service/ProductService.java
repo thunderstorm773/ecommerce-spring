@@ -10,8 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -54,5 +52,39 @@ public class ProductService {
         Optional<Product> product = this.productRepository.findIdWithActiveCategory(id, isAdmin);
         return product.map(value -> this.modelMapperUtil.getModelMapper().map(value, ProductView.class))
                 .orElse(null);
+    }
+
+    public ProductView publishProduct(Long id) {
+        Optional<Product> optionalProduct = this.productRepository.findById(id);
+        if (optionalProduct.isEmpty()) {
+            throw new RuntimeException("Product does not exists");
+        }
+
+        Product product = optionalProduct.get();
+        if(product.getIsActive()) {
+            throw new RuntimeException("Product is already published");
+        }
+
+        product.setIsActive(true);
+        this.productRepository.save(product);
+
+        return this.modelMapperUtil.getModelMapper().map(product, ProductView.class);
+    }
+
+    public ProductView unpublishProduct(Long id) {
+        Optional<Product> optionalProduct = this.productRepository.findById(id);
+        if (optionalProduct.isEmpty()) {
+            throw new RuntimeException("Product does not exists");
+        }
+
+        Product product = optionalProduct.get();
+        if(!product.getIsActive()) {
+            throw new RuntimeException("Product is already unpublished");
+        }
+
+        product.setIsActive(false);
+        this.productRepository.save(product);
+
+        return this.modelMapperUtil.getModelMapper().map(product, ProductView.class);
     }
 }

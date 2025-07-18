@@ -4,6 +4,7 @@ import com.tu.ecommerce.model.bindingModel.*;
 import com.tu.ecommerce.model.viewModel.*;
 import com.tu.ecommerce.service.CouponService;
 import com.tu.ecommerce.service.ProductCategoryService;
+import com.tu.ecommerce.service.ProductService;
 import com.tu.ecommerce.service.SystemParameterService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -20,12 +21,17 @@ public class AdminController {
 
     private final SystemParameterService systemParameterService;
 
+    private final ProductService productService;
+
     public AdminController(ProductCategoryService productCategoryService,
                            CouponService couponService,
-                           SystemParameterService systemParameterService) {
+                           SystemParameterService systemParameterService,
+                           ProductService productService) {
+
         this.productCategoryService = productCategoryService;
         this.couponService = couponService;
         this.systemParameterService = systemParameterService;
+        this.productService = productService;
     }
 
     @GetMapping("product-categories")
@@ -116,5 +122,15 @@ public class AdminController {
     public SystemParameterView editSystemParameter(@PathVariable("id") Long id,
                                                    @Valid @RequestBody EditSystemParameter editSystemParameter) {
         return this.systemParameterService.editSystemParameter(id, editSystemParameter);
+    }
+
+    @PostMapping("products/publish/{id}")
+    public ProductView publishProduct(@PathVariable("id") Long id) {
+        return this.productService.publishProduct(id);
+    }
+
+    @PostMapping("products/unpublish/{id}")
+    public ProductView unpublishProduct(@PathVariable("id") Long id) {
+        return this.productService.unpublishProduct(id);
     }
 }

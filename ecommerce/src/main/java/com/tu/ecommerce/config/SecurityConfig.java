@@ -24,7 +24,7 @@ public class SecurityConfig {
                                          "/api/comments/**")
                         .authenticated()
                         .requestMatchers("/api/admin/product-categories/**", "/api/admin/coupons/**",
-                                "/api/admin/system-parameters/**")
+                                "/api/admin/system-parameters/**", "/api/admin/products/**")
                         .hasAuthority("Admin")
                         .anyRequest().permitAll())
                 .oauth2ResourceServer(resourceServer -> resourceServer.jwt(
