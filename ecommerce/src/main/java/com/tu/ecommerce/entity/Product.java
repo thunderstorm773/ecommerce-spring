@@ -18,9 +18,6 @@ public class Product {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "sku")
-    private String sku;
-
     @Column(name = "name")
     private String name;
 

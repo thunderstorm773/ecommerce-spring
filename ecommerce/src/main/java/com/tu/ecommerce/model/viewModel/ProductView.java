@@ -10,8 +10,6 @@ public class ProductView {
 
     private Long id;
 
-    private String sku;
-
     private String name;
 
     private String description;
