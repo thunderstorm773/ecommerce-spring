@@ -1,8 +1,15 @@
 package com.tu.ecommerce.service;
 
+import com.tu.ecommerce.dao.ProductCategoryRepository;
 import com.tu.ecommerce.dao.ProductRepository;
+import com.tu.ecommerce.dao.SystemParameterRepository;
 import com.tu.ecommerce.entity.Product;
+import com.tu.ecommerce.entity.ProductCategory;
+import com.tu.ecommerce.entity.SystemParameter;
+import com.tu.ecommerce.model.bindingModel.CreateProduct;
 import com.tu.ecommerce.model.viewModel.ProductView;
+import com.tu.ecommerce.util.Constants;
+import com.tu.ecommerce.util.CurrencyUtil;
 import com.tu.ecommerce.util.ModelMapperUtil;
 import com.tu.ecommerce.util.UserUtil;
 import org.springframework.data.domain.Page;
@@ -10,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
@@ -17,12 +26,24 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    private final ProductCategoryRepository productCategoryRepository;
+
+    private final SystemParameterRepository systemParameterRepository;
+
+    private final CurrencyUtil currencyUtil;
+
     private final ModelMapperUtil modelMapperUtil;
 
     public ProductService(ProductRepository productRepository,
+                          ProductCategoryRepository productCategoryRepository,
+                          SystemParameterRepository systemParameterRepository,
+                          CurrencyUtil currencyUtil,
                           ModelMapperUtil modelMapperUtil) {
 
         this.productRepository = productRepository;
+        this.productCategoryRepository = productCategoryRepository;
+        this.systemParameterRepository = systemParameterRepository;
+        this.currencyUtil = currencyUtil;
         this.modelMapperUtil = modelMapperUtil;
     }
 
@@ -52,6 +73,27 @@ public class ProductService {
         Optional<Product> product = this.productRepository.findIdWithActiveCategory(id, isAdmin);
         return product.map(value -> this.modelMapperUtil.getModelMapper().map(value, ProductView.class))
                 .orElse(null);
+    }
+
+    public ProductView createProduct(CreateProduct createProduct) {
+        SystemParameter showBgnCurrencyFirstParam = this.systemParameterRepository
+                .findByCode(Constants.SHOW_BGN_CURRENCY_FIRST_CODE);
+        Product product = this.modelMapperUtil.getModelMapper().map(createProduct, Product.class);
+
+        ProductCategory productCategory = this.productCategoryRepository.findById(createProduct.getCategoryId()).orElse(null);
+        product.setCategory(productCategory);
+
+        if ("1".equals(showBgnCurrencyFirstParam.getValue())) {
+            BigDecimal unitPriceEur = this.currencyUtil.calculatePrice(createProduct.getUnitPrice(), showBgnCurrencyFirstParam);
+            product.setUnitPriceEur(unitPriceEur);
+        } else {
+            product.setUnitPriceEur(createProduct.getUnitPrice());
+            BigDecimal unitPrice = this.currencyUtil.calculatePrice(createProduct.getUnitPrice(), showBgnCurrencyFirstParam);
+            product.setUnitPrice(unitPrice);
+        }
+
+        this.productRepository.save(product);
+        return this.modelMapperUtil.getModelMapper().map(product, ProductView.class);
     }
 
     public ProductView publishProduct(Long id) {

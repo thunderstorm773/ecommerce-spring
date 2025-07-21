@@ -11,20 +11,18 @@ import com.tu.ecommerce.model.bindingModel.CreateOrderItem;
 import com.tu.ecommerce.model.bindingModel.CreatePurchase;
 import com.tu.ecommerce.model.bindingModel.CreatePurchaseResponse;
 import com.tu.ecommerce.model.bindingModel.PaymentInfo;
+import com.tu.ecommerce.util.Constants;
+import com.tu.ecommerce.util.CurrencyUtil;
 import com.tu.ecommerce.util.ModelMapperUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 
 @Service
 public class CheckoutService {
-
-    private static final String SHOW_BGN_CURRENCY_FIRST_CODE = "SHOW_BGN_CURRENCY_FIRST";
-    private static final String BGN_EUR_EXCHANGE_RATE_CODE = "BGN_EUR_EXCHANGE_RATE";
 
     private final CustomerRepository customerRepository;
 
@@ -32,17 +30,21 @@ public class CheckoutService {
 
     private final SystemParameterRepository systemParameterRepository;
 
+    private final CurrencyUtil currencyUtil;
+
     private final ModelMapperUtil modelMapperUtil;
 
     public CheckoutService(CustomerRepository customerRepository,
                            ProductRepository productRepository,
                            SystemParameterRepository systemParameterRepository,
+                           CurrencyUtil currencyUtil,
                            ModelMapperUtil modelMapperUtil,
                            @Value("${stripe.key.secret}") String stripeSecretKey) {
 
         this.customerRepository = customerRepository;
         this.productRepository = productRepository;
         this.systemParameterRepository = systemParameterRepository;
+        this.currencyUtil = currencyUtil;
         this.modelMapperUtil = modelMapperUtil;
         Stripe.apiKey = stripeSecretKey;
     }
@@ -92,14 +94,15 @@ public class CheckoutService {
     }
 
     private void fillOrderItems(CreatePurchase purchase, Order order) {
-        SystemParameter showBgnCurrencyFirstParam = this.systemParameterRepository.findByCode(SHOW_BGN_CURRENCY_FIRST_CODE);
+        SystemParameter showBgnCurrencyFirstParam = this.systemParameterRepository
+                .findByCode(Constants.SHOW_BGN_CURRENCY_FIRST_CODE);
 
         if ("1".equals(showBgnCurrencyFirstParam.getValue())) {
-            BigDecimal totalPriceEur = this.calculateOtherPrice(order.getTotalPrice(), showBgnCurrencyFirstParam);
+            BigDecimal totalPriceEur = this.currencyUtil.calculatePrice(order.getTotalPrice(), showBgnCurrencyFirstParam);
             order.setTotalPriceEur(totalPriceEur);
         } else {
             order.setTotalPriceEur(order.getTotalPrice());
-            BigDecimal totalPrice = this.calculateOtherPrice(order.getTotalPrice(), showBgnCurrencyFirstParam);
+            BigDecimal totalPrice = this.currencyUtil.calculatePrice(order.getTotalPrice(), showBgnCurrencyFirstParam);
             order.setTotalPrice(totalPrice);
         }
 
@@ -115,27 +118,16 @@ public class CheckoutService {
             }
 
             if ("1".equals(showBgnCurrencyFirstParam.getValue())) {
-                BigDecimal unitPriceEur = this.calculateOtherPrice(orderItem.getUnitPrice(), showBgnCurrencyFirstParam);
+                BigDecimal unitPriceEur = this.currencyUtil.calculatePrice(orderItem.getUnitPrice(), showBgnCurrencyFirstParam);
                 orderItem.setUnitPriceEur(unitPriceEur);
             } else {
                 orderItem.setUnitPriceEur(orderItem.getUnitPrice());
-                BigDecimal unitPrice = this.calculateOtherPrice(orderItem.getUnitPrice(), showBgnCurrencyFirstParam);
+                BigDecimal unitPrice = this.currencyUtil.calculatePrice(orderItem.getUnitPrice(), showBgnCurrencyFirstParam);
                 orderItem.setUnitPrice(unitPrice);
             }
 
             orderItem.setProduct(product);
             order.addOrderItem(orderItem);
-        }
-    }
-
-    private BigDecimal calculateOtherPrice(BigDecimal price, SystemParameter showBgnCurrencyFirstParam) {
-        SystemParameter bgnEurExchangeRateParam = this.systemParameterRepository.findByCode(BGN_EUR_EXCHANGE_RATE_CODE);
-
-        BigDecimal exchangeRate = new BigDecimal(bgnEurExchangeRateParam.getValue());
-        if ("1".equals(showBgnCurrencyFirstParam.getValue())) {
-            return price.divide(exchangeRate, 2, RoundingMode.HALF_UP);
-        } else {
-            return price.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP);
         }
     }
 }

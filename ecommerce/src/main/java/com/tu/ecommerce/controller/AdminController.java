@@ -133,4 +133,9 @@ public class AdminController {
     public ProductView unpublishProduct(@PathVariable("id") Long id) {
         return this.productService.unpublishProduct(id);
     }
+
+    @PostMapping("products/add")
+    public ProductView createProduct(@Valid @RequestBody CreateProduct createProduct) {
+        return this.productService.createProduct(createProduct);
+    }
 }
