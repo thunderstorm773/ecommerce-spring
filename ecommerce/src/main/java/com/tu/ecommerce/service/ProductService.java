@@ -7,6 +7,7 @@ import com.tu.ecommerce.entity.Product;
 import com.tu.ecommerce.entity.ProductCategory;
 import com.tu.ecommerce.entity.SystemParameter;
 import com.tu.ecommerce.model.bindingModel.CreateProduct;
+import com.tu.ecommerce.model.bindingModel.EditProduct;
 import com.tu.ecommerce.model.viewModel.ProductView;
 import com.tu.ecommerce.util.Constants;
 import com.tu.ecommerce.util.CurrencyUtil;
@@ -82,16 +83,26 @@ public class ProductService {
 
         ProductCategory productCategory = this.productCategoryRepository.findById(createProduct.getCategoryId()).orElse(null);
         product.setCategory(productCategory);
+        this.setProductPrice(product, createProduct.getUnitPrice(), showBgnCurrencyFirstParam);
 
-        if ("1".equals(showBgnCurrencyFirstParam.getValue())) {
-            BigDecimal unitPriceEur = this.currencyUtil.calculatePrice(createProduct.getUnitPrice(), showBgnCurrencyFirstParam);
-            product.setUnitPriceEur(unitPriceEur);
-        } else {
-            product.setUnitPriceEur(createProduct.getUnitPrice());
-            BigDecimal unitPrice = this.currencyUtil.calculatePrice(createProduct.getUnitPrice(), showBgnCurrencyFirstParam);
-            product.setUnitPrice(unitPrice);
+        this.productRepository.save(product);
+        return this.modelMapperUtil.getModelMapper().map(product, ProductView.class);
+    }
+
+    public ProductView editProduct(Long id, EditProduct editProduct) {
+        SystemParameter showBgnCurrencyFirstParam = this.systemParameterRepository
+                .findByCode(Constants.SHOW_BGN_CURRENCY_FIRST_CODE);
+        Product product = this.productRepository.findById(id).orElse(null);
+
+        if (product == null) {
+            throw new RuntimeException("Product does not exists");
         }
 
+        ProductCategory productCategory = this.productCategoryRepository.findById(editProduct.getCategoryId()).orElse(null);
+        product.setCategory(productCategory);
+        this.setProductPrice(product, editProduct.getUnitPrice(), showBgnCurrencyFirstParam);
+
+        this.modelMapperUtil.getModelMapper().map(editProduct, product);
         this.productRepository.save(product);
         return this.modelMapperUtil.getModelMapper().map(product, ProductView.class);
     }
@@ -128,5 +139,19 @@ public class ProductService {
         this.productRepository.save(product);
 
         return this.modelMapperUtil.getModelMapper().map(product, ProductView.class);
+    }
+
+    private void setProductPrice(Product product,
+                                 BigDecimal price,
+                                 SystemParameter showBgnCurrencyFirstParam) {
+
+        if ("1".equals(showBgnCurrencyFirstParam.getValue())) {
+            BigDecimal unitPriceEur = this.currencyUtil.calculatePrice(price, showBgnCurrencyFirstParam);
+            product.setUnitPriceEur(unitPriceEur);
+        } else {
+            product.setUnitPriceEur(price);
+            BigDecimal unitPrice = this.currencyUtil.calculatePrice(price, showBgnCurrencyFirstParam);
+            product.setUnitPrice(unitPrice);
+        }
     }
 }

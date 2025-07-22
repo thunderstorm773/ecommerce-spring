@@ -138,4 +138,10 @@ public class AdminController {
     public ProductView createProduct(@Valid @RequestBody CreateProduct createProduct) {
         return this.productService.createProduct(createProduct);
     }
+
+    @PutMapping("products/edit/{id}")
+    public ProductView editProduct(@PathVariable("id") Long id,
+                                   @Valid @RequestBody EditProduct editProduct) {
+        return this.productService.editProduct(id, editProduct);
+    }
 }
