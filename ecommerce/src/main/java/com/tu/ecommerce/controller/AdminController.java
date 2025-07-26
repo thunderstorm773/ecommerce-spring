@@ -134,19 +134,19 @@ public class AdminController {
         return this.productService.unpublishProduct(id);
     }
 
+    @GetMapping("products/{id}")
+    public ProductAdminView getProduct(@PathVariable("id") Long id) {
+        return this.productService.getProduct(id);
+    }
+
     @PostMapping("products/add")
-    public ProductView createProduct(@Valid @RequestBody CreateProduct createProduct) {
+    public ProductAdminView createProduct(@Valid @RequestBody CreateProduct createProduct) {
         return this.productService.createProduct(createProduct);
     }
 
     @PutMapping("products/edit/{id}")
-    public ProductView editProduct(@PathVariable("id") Long id,
+    public ProductAdminView editProduct(@PathVariable("id") Long id,
                                    @Valid @RequestBody EditProduct editProduct) {
         return this.productService.editProduct(id, editProduct);
-    }
-
-    @GetMapping("products/{id}")
-    public ProductAdminView getProduct(@PathVariable("id") Long id) {
-        return this.productService.getProduct(id);
     }
 }

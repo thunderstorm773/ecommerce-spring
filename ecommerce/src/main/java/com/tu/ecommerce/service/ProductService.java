@@ -83,7 +83,7 @@ public class ProductService {
                 .orElse(null);
     }
 
-    public ProductView createProduct(CreateProduct createProduct) {
+    public ProductAdminView createProduct(CreateProduct createProduct) {
         SystemParameter showBgnCurrencyFirstParam = this.systemParameterRepository
                 .findByCode(Constants.SHOW_BGN_CURRENCY_FIRST_CODE);
         Product product = this.modelMapperUtil.getModelMapper().map(createProduct, Product.class);
@@ -93,10 +93,10 @@ public class ProductService {
         this.setProductPrice(product, createProduct.getUnitPrice(), showBgnCurrencyFirstParam);
 
         this.productRepository.save(product);
-        return this.modelMapperUtil.getModelMapper().map(product, ProductView.class);
+        return this.modelMapperUtil.getModelMapper().map(product, ProductAdminView.class);
     }
 
-    public ProductView editProduct(Long id, EditProduct editProduct) {
+    public ProductAdminView editProduct(Long id, EditProduct editProduct) {
         SystemParameter showBgnCurrencyFirstParam = this.systemParameterRepository
                 .findByCode(Constants.SHOW_BGN_CURRENCY_FIRST_CODE);
         Product product = this.productRepository.findById(id).orElse(null);
@@ -105,13 +105,14 @@ public class ProductService {
             throw new RuntimeException("Product does not exists");
         }
 
+        this.modelMapperUtil.getModelMapper().map(editProduct, product);
+
         ProductCategory productCategory = this.productCategoryRepository.findById(editProduct.getCategoryId()).orElse(null);
         product.setCategory(productCategory);
         this.setProductPrice(product, editProduct.getUnitPrice(), showBgnCurrencyFirstParam);
 
-        this.modelMapperUtil.getModelMapper().map(editProduct, product);
         this.productRepository.save(product);
-        return this.modelMapperUtil.getModelMapper().map(product, ProductView.class);
+        return this.modelMapperUtil.getModelMapper().map(product, ProductAdminView.class);
     }
 
     public ProductView publishProduct(Long id) {

@@ -25,7 +25,7 @@ public class EditProduct {
     private String imageUrl;
 
     @NotNull(message = "Units in stock is required")
-    @Min(value = 1, message = "Units in stock must be at least 1")
+    @Min(value = 0, message = "Units in stock must be at least 0")
     private Integer unitsInStock;
 
     @NotNull(message = "Category id is required")
