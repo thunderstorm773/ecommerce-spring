@@ -8,6 +8,7 @@ import com.tu.ecommerce.entity.ProductCategory;
 import com.tu.ecommerce.entity.SystemParameter;
 import com.tu.ecommerce.model.bindingModel.CreateProduct;
 import com.tu.ecommerce.model.bindingModel.EditProduct;
+import com.tu.ecommerce.model.viewModel.ProductAdminView;
 import com.tu.ecommerce.model.viewModel.ProductView;
 import com.tu.ecommerce.util.Constants;
 import com.tu.ecommerce.util.CurrencyUtil;
@@ -73,6 +74,12 @@ public class ProductService {
 
         Optional<Product> product = this.productRepository.findIdWithActiveCategory(id, isAdmin);
         return product.map(value -> this.modelMapperUtil.getModelMapper().map(value, ProductView.class))
+                .orElse(null);
+    }
+
+    public ProductAdminView getProduct(Long id) {
+        Optional<Product> product = this.productRepository.findById(id);
+        return product.map(value -> this.modelMapperUtil.getModelMapper().map(value, ProductAdminView.class))
                 .orElse(null);
     }
 

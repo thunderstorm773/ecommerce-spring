@@ -144,4 +144,9 @@ public class AdminController {
                                    @Valid @RequestBody EditProduct editProduct) {
         return this.productService.editProduct(id, editProduct);
     }
+
+    @GetMapping("products/{id}")
+    public ProductAdminView getProduct(@PathVariable("id") Long id) {
+        return this.productService.getProduct(id);
+    }
 }
