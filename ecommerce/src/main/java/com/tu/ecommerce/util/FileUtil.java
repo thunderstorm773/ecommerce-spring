@@ -1,6 +1,7 @@
 package com.tu.ecommerce.util;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,7 +11,13 @@ import java.io.OutputStream;
 @Component
 public class FileUtil {
 
-    public File createFile(byte[] fileContent, String fileName) throws IOException {
+    public File saveImage(MultipartFile tempFile) throws IOException {
+        byte[] fileBytes = tempFile.getBytes();
+        String fileName = tempFile.getOriginalFilename();
+        return this.createFile(fileBytes, fileName);
+    }
+
+    private File createFile(byte[] fileContent, String fileName) throws IOException {
         this.createTempFilesFolder();
 
         // Use when upload file from Microsoft Edge or Internet Explorer,

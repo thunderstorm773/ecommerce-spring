@@ -17,6 +17,10 @@ public class CategoryValidator implements ConstraintValidator<Category, Long> {
 
     @Override
     public boolean isValid(Long categoryId, ConstraintValidatorContext constraintValidatorContext) {
+        if(categoryId == null) {
+            return false;
+        }
+
         ProductCategoryView productCategory = this.productCategoryService.getProductCategoryById(categoryId);
         return productCategory != null;
     }

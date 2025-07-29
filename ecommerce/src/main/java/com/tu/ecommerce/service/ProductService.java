@@ -10,20 +10,24 @@ import com.tu.ecommerce.model.bindingModel.CreateProduct;
 import com.tu.ecommerce.model.bindingModel.EditProduct;
 import com.tu.ecommerce.model.viewModel.ProductAdminView;
 import com.tu.ecommerce.model.viewModel.ProductView;
-import com.tu.ecommerce.util.Constants;
-import com.tu.ecommerce.util.CurrencyUtil;
-import com.tu.ecommerce.util.ModelMapperUtil;
-import com.tu.ecommerce.util.UserUtil;
+import com.tu.ecommerce.util.*;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Service
+@Log4j2
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -36,17 +40,25 @@ public class ProductService {
 
     private final ModelMapperUtil modelMapperUtil;
 
+    private final FileUtil fileUtil;
+
+    private final CdnUtil cdnUtil;
+
     public ProductService(ProductRepository productRepository,
                           ProductCategoryRepository productCategoryRepository,
                           SystemParameterRepository systemParameterRepository,
                           CurrencyUtil currencyUtil,
-                          ModelMapperUtil modelMapperUtil) {
+                          ModelMapperUtil modelMapperUtil,
+                          FileUtil fileUtil,
+                          CdnUtil cdnUtil) {
 
         this.productRepository = productRepository;
         this.productCategoryRepository = productCategoryRepository;
         this.systemParameterRepository = systemParameterRepository;
         this.currencyUtil = currencyUtil;
         this.modelMapperUtil = modelMapperUtil;
+        this.fileUtil = fileUtil;
+        this.cdnUtil = cdnUtil;
     }
 
     public Page<ProductView> getAllProducts(String name, Jwt jwt, Pageable pageable) {
@@ -83,7 +95,7 @@ public class ProductService {
                 .orElse(null);
     }
 
-    public ProductAdminView createProduct(CreateProduct createProduct) {
+    public ProductAdminView createProduct(CreateProduct createProduct) throws IOException {
         SystemParameter showBgnCurrencyFirstParam = this.systemParameterRepository
                 .findByCode(Constants.SHOW_BGN_CURRENCY_FIRST_CODE);
         Product product = this.modelMapperUtil.getModelMapper().map(createProduct, Product.class);
@@ -91,6 +103,13 @@ public class ProductService {
         ProductCategory productCategory = this.productCategoryRepository.findById(createProduct.getCategoryId()).orElse(null);
         product.setCategory(productCategory);
         this.setProductPrice(product, createProduct.getUnitPrice(), showBgnCurrencyFirstParam);
+
+        File imageFile = this.fileUtil.saveImage(createProduct.getFile());
+        Map uploadResult = this.uploadImageInCloud(imageFile);
+        // Delete local file after it has been uploaded in CDN
+        imageFile.delete();
+        String imagePublicUrl = (String) uploadResult.get(Constants.CDN_SECURE_URL);
+        product.setImageUrl(imagePublicUrl);
 
         this.productRepository.save(product);
         return this.modelMapperUtil.getModelMapper().map(product, ProductAdminView.class);
@@ -161,5 +180,19 @@ public class ProductService {
             BigDecimal unitPrice = this.currencyUtil.calculatePrice(price, showBgnCurrencyFirstParam);
             product.setUnitPrice(unitPrice);
         }
+    }
+
+    private Map uploadImageInCloud(File imageFile) throws IOException {
+        CompletableFuture<Map> taskResult = this.cdnUtil.upload(imageFile);
+        CompletableFuture.anyOf(taskResult).join();
+        Map uploadResult;
+        try {
+            uploadResult = taskResult.get();
+        } catch (InterruptedException | ExecutionException e) {
+            log.error(e);
+            return null;
+        }
+
+        return uploadResult;
     }
 }

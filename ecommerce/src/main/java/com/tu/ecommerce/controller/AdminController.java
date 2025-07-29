@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -140,13 +141,13 @@ public class AdminController {
     }
 
     @PostMapping("products/add")
-    public ProductAdminView createProduct(@Valid @RequestBody CreateProduct createProduct) {
+    public ProductAdminView createProduct(@Valid @ModelAttribute CreateProduct createProduct) throws IOException {
         return this.productService.createProduct(createProduct);
     }
 
     @PutMapping("products/edit/{id}")
     public ProductAdminView editProduct(@PathVariable("id") Long id,
-                                   @Valid @RequestBody EditProduct editProduct) {
+                                        @Valid @RequestBody EditProduct editProduct) {
         return this.productService.editProduct(id, editProduct);
     }
 }
