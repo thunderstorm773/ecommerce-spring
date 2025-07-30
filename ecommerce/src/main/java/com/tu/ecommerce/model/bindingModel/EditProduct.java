@@ -1,8 +1,10 @@
 package com.tu.ecommerce.model.bindingModel;
 
 import com.tu.ecommerce.model.validation.Category;
+import com.tu.ecommerce.model.validation.Image;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 
@@ -21,9 +23,6 @@ public class EditProduct {
     @DecimalMin(value = "0.5", message = "Unit price must be at least 0.5")
     private BigDecimal unitPrice;
 
-    @NotBlank(message = "Image URL is required")
-    private String imageUrl;
-
     @NotNull(message = "Units in stock is required")
     @Min(value = 0, message = "Units in stock must be at least 0")
     private Integer unitsInStock;
@@ -34,4 +33,7 @@ public class EditProduct {
 
     @NotNull(message = "Is active is required")
     private Boolean isActive;
+
+    @Image
+    private MultipartFile file;
 }

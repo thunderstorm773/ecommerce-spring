@@ -33,6 +33,9 @@ public class Product {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "image_cdn_id")
+    private String imageCdnId;
+
     @Column(name = "active")
     private Boolean isActive;
 

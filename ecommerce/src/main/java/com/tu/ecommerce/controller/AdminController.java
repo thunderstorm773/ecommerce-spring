@@ -147,7 +147,7 @@ public class AdminController {
 
     @PutMapping("products/edit/{id}")
     public ProductAdminView editProduct(@PathVariable("id") Long id,
-                                        @Valid @RequestBody EditProduct editProduct) {
+                                        @Valid @ModelAttribute EditProduct editProduct) throws Exception {
         return this.productService.editProduct(id, editProduct);
     }
 }

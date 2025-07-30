@@ -10,4 +10,5 @@ public class Constants {
     public static final String TEMP_FILES_FOLDER = "temp";
     public static final String TEMP_FILES_PATH = Constants.ROOT_PATH + File.separator + TEMP_FILES_FOLDER;
     public static final String CDN_SECURE_URL = "secure_url";
+    public static final String CDN_PUBLIC_ID = "public_id";
 }

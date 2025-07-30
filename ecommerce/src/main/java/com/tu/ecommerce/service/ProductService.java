@@ -106,16 +106,20 @@ public class ProductService {
 
         File imageFile = this.fileUtil.saveImage(createProduct.getFile());
         Map uploadResult = this.uploadImageInCloud(imageFile);
+
         // Delete local file after it has been uploaded in CDN
         imageFile.delete();
         String imagePublicUrl = (String) uploadResult.get(Constants.CDN_SECURE_URL);
+        String imagePublicId = (String) uploadResult.get(Constants.CDN_PUBLIC_ID);
+
         product.setImageUrl(imagePublicUrl);
+        product.setImageCdnId(imagePublicId);
 
         this.productRepository.save(product);
         return this.modelMapperUtil.getModelMapper().map(product, ProductAdminView.class);
     }
 
-    public ProductAdminView editProduct(Long id, EditProduct editProduct) {
+    public ProductAdminView editProduct(Long id, EditProduct editProduct) throws Exception {
         SystemParameter showBgnCurrencyFirstParam = this.systemParameterRepository
                 .findByCode(Constants.SHOW_BGN_CURRENCY_FIRST_CODE);
         Product product = this.productRepository.findById(id).orElse(null);
@@ -129,6 +133,20 @@ public class ProductService {
         ProductCategory productCategory = this.productCategoryRepository.findById(editProduct.getCategoryId()).orElse(null);
         product.setCategory(productCategory);
         this.setProductPrice(product, editProduct.getUnitPrice(), showBgnCurrencyFirstParam);
+
+        File imageFile = this.fileUtil.saveImage(editProduct.getFile());
+        Map uploadResult = this.uploadImageInCloud(imageFile);
+
+        // Delete local file after it has been uploaded in CDN
+        imageFile.delete();
+        String imagePublicUrl = (String) uploadResult.get(Constants.CDN_SECURE_URL);
+        String imagePublicId = (String) uploadResult.get(Constants.CDN_PUBLIC_ID);
+
+        // Delete resource from cdn
+        this.cdnUtil.deleteResource(product.getImageCdnId());
+
+        product.setImageUrl(imagePublicUrl);
+        product.setImageCdnId(imagePublicId);
 
         this.productRepository.save(product);
         return this.modelMapperUtil.getModelMapper().map(product, ProductAdminView.class);
