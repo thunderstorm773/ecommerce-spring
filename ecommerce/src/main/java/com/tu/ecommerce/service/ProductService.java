@@ -89,10 +89,18 @@ public class ProductService {
                 .orElse(null);
     }
 
-    public ProductAdminView getProduct(Long id) {
+    public ProductAdminView getProduct(Long id) throws IOException, InterruptedException {
         Optional<Product> product = this.productRepository.findById(id);
-        return product.map(value -> this.modelMapperUtil.getModelMapper().map(value, ProductAdminView.class))
-                .orElse(null);
+        ProductAdminView productAdminView = product.map(value -> this.modelMapperUtil.getModelMapper()
+                        .map(value, ProductAdminView.class))
+                        .orElse(null);
+
+        if (productAdminView != null) {
+            String imageContent = this.cdnUtil.getResourceBase64(productAdminView.getImageUrl());
+            productAdminView.setImage(imageContent);
+        }
+
+        return productAdminView;
     }
 
     public ProductAdminView createProduct(CreateProduct createProduct) throws IOException {

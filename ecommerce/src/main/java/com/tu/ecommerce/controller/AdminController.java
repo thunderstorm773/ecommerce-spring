@@ -136,7 +136,7 @@ public class AdminController {
     }
 
     @GetMapping("products/{id}")
-    public ProductAdminView getProduct(@PathVariable("id") Long id) {
+    public ProductAdminView getProduct(@PathVariable("id") Long id) throws IOException, InterruptedException {
         return this.productService.getProduct(id);
     }
 

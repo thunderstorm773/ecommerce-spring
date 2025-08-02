@@ -14,6 +14,8 @@ public class ProductAdminView {
 
     private String description;
 
+    private String image;
+
     private ProductCategoryView category;
 
     private BigDecimal unitPrice;

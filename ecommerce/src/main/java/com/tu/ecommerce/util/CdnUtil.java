@@ -9,6 +9,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -54,5 +59,20 @@ public class CdnUtil {
     public void deleteResource(String partialUrl) throws Exception {
         this.cloudinary.api().deleteResources(Collections.singletonList(partialUrl),
                 ObjectUtils.asMap(RESOURCE_TYPE_KEY, IMAGE_RESOURCE_TYPE));
+    }
+
+    public String getResourceBase64(String resourceUrl) throws IOException, InterruptedException {
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(resourceUrl))
+                    .GET().build();
+
+            HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            if(response.statusCode() == 200) {
+                return Base64.getEncoder().encodeToString(response.body());
+            } else {
+                throw new IOException("Failed to fetch resource, status: " + response.statusCode());
+            }
+        }
     }
 }
