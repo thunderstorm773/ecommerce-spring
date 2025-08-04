@@ -33,6 +33,11 @@ public class OrderService {
         return this.modelMapperUtil.convertToPage(pageable, orders, OrderView.class);
     }
 
+    public Page<OrderView> getAllOrders(Pageable pageable) {
+        Page<Order> orders = this.orderRepository.findAllByOrderByDateCreatedDesc(pageable);
+        return this.modelMapperUtil.convertToPage(pageable, orders, OrderView.class);
+    }
+
     public OrderWithItemsView getOrderById(Long id, Jwt jwt) {
         Order order = this.orderRepository.findById(id).orElse(null);
         if (order == null) {

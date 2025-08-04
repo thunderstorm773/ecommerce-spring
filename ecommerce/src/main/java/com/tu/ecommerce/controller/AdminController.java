@@ -2,13 +2,12 @@ package com.tu.ecommerce.controller;
 
 import com.tu.ecommerce.model.bindingModel.*;
 import com.tu.ecommerce.model.viewModel.*;
-import com.tu.ecommerce.service.CouponService;
-import com.tu.ecommerce.service.ProductCategoryService;
-import com.tu.ecommerce.service.ProductService;
-import com.tu.ecommerce.service.SystemParameterService;
+import com.tu.ecommerce.service.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
@@ -24,15 +23,19 @@ public class AdminController {
 
     private final ProductService productService;
 
+    private final OrderService orderService;
+
     public AdminController(ProductCategoryService productCategoryService,
                            CouponService couponService,
                            SystemParameterService systemParameterService,
-                           ProductService productService) {
+                           ProductService productService,
+                           OrderService orderService) {
 
         this.productCategoryService = productCategoryService;
         this.couponService = couponService;
         this.systemParameterService = systemParameterService;
         this.productService = productService;
+        this.orderService = orderService;
     }
 
     @GetMapping("product-categories")
@@ -149,5 +152,16 @@ public class AdminController {
     public ProductAdminView editProduct(@PathVariable("id") Long id,
                                         @Valid @ModelAttribute EditProduct editProduct) throws Exception {
         return this.productService.editProduct(id, editProduct);
+    }
+
+    @GetMapping("orders")
+    public Page<OrderView> getAllOrders(Pageable pageable) {
+        return this.orderService.getAllOrders(pageable);
+    }
+
+    @GetMapping("orders/{id}")
+    public OrderWithItemsView getOrderDetails(@PathVariable("id") Long id,
+                                              @AuthenticationPrincipal Jwt jwt) {
+        return this.orderService.getOrderById(id, jwt);
     }
 }

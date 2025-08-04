@@ -156,6 +156,8 @@ public class ProductService {
         product.setImageUrl(imagePublicUrl);
         product.setImageCdnId(imagePublicId);
 
+        // TODO Update image url for order items
+
         this.productRepository.save(product);
         return this.modelMapperUtil.getModelMapper().map(product, ProductAdminView.class);
     }

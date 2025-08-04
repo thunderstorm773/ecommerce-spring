@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findAllByCustomer_EmailOrderByDateCreatedDesc(String customerEmail, Pageable pageable);
+
+    Page<Order> findAllByOrderByDateCreatedDesc(Pageable pageable);
 }
