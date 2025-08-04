@@ -54,4 +54,36 @@ public class OrderService {
 
         return this.modelMapperUtil.getModelMapper().map(order, OrderWithItemsView.class);
     }
+
+    public OrderView processOrder(Long id) {
+        Order order = this.orderRepository.findById(id).orElse(null);
+        if (order == null) {
+            throw new RuntimeException("Order does not exists");
+        }
+
+        if(!order.getStatus().equals("Pending")) {
+            throw new RuntimeException("Order is not in status: Pending");
+        }
+
+        order.setStatus("Processing");
+        this.orderRepository.save(order);
+
+        return this.modelMapperUtil.getModelMapper().map(order, OrderView.class);
+    }
+
+    public OrderView rejectOrder(Long id) {
+        Order order = this.orderRepository.findById(id).orElse(null);
+        if (order == null) {
+            throw new RuntimeException("Order does not exists");
+        }
+
+        if(!order.getStatus().equals("Pending")) {
+            throw new RuntimeException("Order is not in status: Pending");
+        }
+
+        order.setStatus("Rejected");
+        this.orderRepository.save(order);
+
+        return this.modelMapperUtil.getModelMapper().map(order, OrderView.class);
+    }
 }

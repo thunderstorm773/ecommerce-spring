@@ -19,4 +19,6 @@ public class OrderView {
     private BigDecimal totalPriceEur;
 
     private Date dateCreated;
+
+    private String status;
 }

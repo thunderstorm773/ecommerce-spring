@@ -164,4 +164,14 @@ public class AdminController {
                                               @AuthenticationPrincipal Jwt jwt) {
         return this.orderService.getOrderById(id, jwt);
     }
+
+    @PostMapping("orders/process/{id}")
+    public OrderView processOrder(@PathVariable("id") Long id) {
+        return this.orderService.processOrder(id);
+    }
+
+    @PostMapping("orders/reject/{id}")
+    public OrderView rejectOrder(@PathVariable("id") Long id) {
+        return this.orderService.rejectOrder(id);
+    }
 }
