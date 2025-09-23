@@ -13,7 +13,5 @@ public class CreatePurchase {
 
     private CreateAddress billingAddress;
 
-    private CreateOrder order;
-
     private Set<CreateOrderItem> orderItems;
 }

@@ -51,7 +51,7 @@ public class CheckoutService {
 
     @Transactional
     public CreatePurchaseResponse placeOrder(CreatePurchase purchase) {
-        Order order = this.modelMapperUtil.getModelMapper().map(purchase.getOrder(), Order.class);
+        Order order = new Order();
 
         String orderTrackingNumber = this.generateOrderTrackingNumber();
         order.setOrderTrackingNumber(orderTrackingNumber);
@@ -97,6 +97,44 @@ public class CheckoutService {
         SystemParameter showBgnCurrencyFirstParam = this.systemParameterRepository
                 .findByCode(Constants.SHOW_BGN_CURRENCY_FIRST_CODE);
 
+        List<CreateOrderItem> createOrderItems = purchase.getOrderItems().stream().toList();
+        List<OrderItem> mappedOrderItems = this.modelMapperUtil.convertAll(createOrderItems, OrderItem.class);
+        Set<OrderItem> orderItems = new HashSet<>(mappedOrderItems);
+
+        BigDecimal orderTotalPrice = BigDecimal.ZERO;
+        int orderTotalQuantity = 0;
+        for (OrderItem orderItem : orderItems) {
+            Product product = this.productRepository.findById(orderItem.getProduct().getId()).orElse(null);
+            if(product == null) {
+                throw new RuntimeException(String.format("Product with id %s not found", orderItem.getProduct().getId()));
+            }
+
+            BigDecimal orderPrice = product.getUnitPrice().multiply(new BigDecimal(orderItem.getQuantity()));
+            orderTotalQuantity += orderItem.getQuantity();
+            orderTotalPrice = orderTotalPrice.add(orderPrice);
+
+            int newUnitsInStock = Math.max(product.getUnitsInStock() - orderItem.getQuantity(), 0);
+            product.setUnitsInStock(newUnitsInStock);
+
+            if ("1".equals(showBgnCurrencyFirstParam.getValue())) {
+                orderItem.setUnitPrice(product.getUnitPrice());
+                BigDecimal unitPriceEur = this.currencyUtil.calculatePrice(product.getUnitPrice(), showBgnCurrencyFirstParam);
+                orderItem.setUnitPriceEur(unitPriceEur);
+            } else {
+                orderItem.setUnitPriceEur(orderItem.getUnitPrice());
+                BigDecimal unitPrice = this.currencyUtil.calculatePrice(product.getUnitPrice(), showBgnCurrencyFirstParam);
+                orderItem.setUnitPrice(unitPrice);
+            }
+
+            orderItem.setImageURL(product.getImageUrl());
+            orderItem.setProduct(product);
+            order.addOrderItem(orderItem);
+        }
+
+        order.setTotalQuantity(orderTotalQuantity);
+        order.setTotalPrice(orderTotalPrice);
+        order.setStatus("Pending");
+
         if ("1".equals(showBgnCurrencyFirstParam.getValue())) {
             BigDecimal totalPriceEur = this.currencyUtil.calculatePrice(order.getTotalPrice(), showBgnCurrencyFirstParam);
             order.setTotalPriceEur(totalPriceEur);
@@ -104,30 +142,6 @@ public class CheckoutService {
             order.setTotalPriceEur(order.getTotalPrice());
             BigDecimal totalPrice = this.currencyUtil.calculatePrice(order.getTotalPrice(), showBgnCurrencyFirstParam);
             order.setTotalPrice(totalPrice);
-        }
-
-        List<CreateOrderItem> createOrderItems = purchase.getOrderItems().stream().toList();
-        List<OrderItem> mappedOrderItems = this.modelMapperUtil.convertAll(createOrderItems, OrderItem.class);
-        Set<OrderItem> orderItems = new HashSet<>(mappedOrderItems);
-
-        for (OrderItem orderItem : orderItems) {
-            Product product = this.productRepository.findById(orderItem.getProduct().getId()).orElse(null);
-            if (product != null) {
-                int newUnitsInStock = Math.max(product.getUnitsInStock() - orderItem.getQuantity(), 0);
-                product.setUnitsInStock(newUnitsInStock);
-            }
-
-            if ("1".equals(showBgnCurrencyFirstParam.getValue())) {
-                BigDecimal unitPriceEur = this.currencyUtil.calculatePrice(orderItem.getUnitPrice(), showBgnCurrencyFirstParam);
-                orderItem.setUnitPriceEur(unitPriceEur);
-            } else {
-                orderItem.setUnitPriceEur(orderItem.getUnitPrice());
-                BigDecimal unitPrice = this.currencyUtil.calculatePrice(orderItem.getUnitPrice(), showBgnCurrencyFirstParam);
-                orderItem.setUnitPrice(unitPrice);
-            }
-
-            orderItem.setProduct(product);
-            order.addOrderItem(orderItem);
         }
     }
 }
